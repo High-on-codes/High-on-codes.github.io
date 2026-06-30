@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Z | Local-First Telemetry Roadmaps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #050811;
+      --cyan: #00F2FE;
+      --cyan-glow: rgba(0, 242, 254, 0.4);
+      --purple-dark: #1F0B40;
+      --purple-light: #8E2DE2;
+      --text-main: #F8FAFC;
+      --text-muted: #64748B;
+      --border-color: rgba(0, 242, 254, 0.15);
+      --glass-bg: rgba(7, 12, 28, 0.6);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    #space-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .nebula {
+      position: absolute;
+      width: 800px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(142, 45, 226, 0.12) 0%, rgba(0, 242, 254, 0.03) 50%, transparent 70%);
+      top: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: -1;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .mono {
+      font-family: 'Space Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    /* --- NAVIGATION --- */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      color: #fff;
+    }
+
+    .logo-box {
+      background: linear-gradient(135deg, var(--cyan), var(--purple-light));
+      color: #000;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 3rem;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.75rem;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--cyan);
+      text-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .btn-nav {
+      border: 1px solid var(--cyan);
+      padding: 0.6rem 1.4rem;
+      border-radius: 50px;
+      color: var(--cyan);
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: bold;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+    }
+
+    .btn-nav:hover {
+      background: var(--cyan);
+      color: #000;
+      box-shadow: 0 0 20px var(--cyan-glow);
+      transform: translateY(-1px);
+    }
+
+    /* --- HERO SECTION --- */
+    .hero {
+      text-align: center;
+      padding: 7rem 0 4rem;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.2rem;
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
+      color: var(--cyan);
+      background: rgba(0, 242, 254, 0.03);
+      margin-bottom: 2.5rem;
+      font-size: 0.75rem;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.05);
+    }
+
+    .badge-pulse {
+      width: 6px;
+      height: 6px;
+      background: var(--cyan);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 4.8rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+      background: linear-gradient(180deg, #FFFFFF 30%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: #94A3B8;
+      font-size: 1.25rem;
+      max-width: 760px;
+      margin: 0 auto 3.5rem;
+      font-weight: 300;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.1rem 2.4rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00F2FE 0%, #0072FF 100%);
+      color: #050811;
+      box-shadow: 0 10px 30px rgba(0, 242, 254, 0.2);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 15px 40px rgba(0, 242, 254, 0.4);
+      transform: translateY(-3px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+    }
+
+    /* --- THE COMMAND CONSOLE MOCKUP --- */
+    .mockup-section {
+      padding: 2rem 0 6rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .mockup-window {
+      background: var(--glass-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 950px;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.7), inset 0 0 40px rgba(0, 242, 254, 0.02);
+      backdrop-filter: blur(30px);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mockup-window::before {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 242, 254, 0.03) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      z-index: 10;
+      background-size: 100% 4px, 6px 100%;
+      pointer-events: none;
+    }
+
+    .mockup-header {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      background: rgba(3, 5, 12, 0.8);
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #1E293B;
+    }
+    .mockup-window:hover .dot.red { background: #EF4444; }
+    .mockup-window:hover .dot.yellow { background: #F59E0B; }
+    .mockup-window:hover .dot.green { background: #10B981; }
+
+    .mockup-tabs {
+      display: flex;
+      margin-left: 2.5rem;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .mockup-tab {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #475569;
+      padding: 0.35rem 1rem;
+      cursor: pointer;
+      font-size: 0.7rem;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      border-radius: 6px;
+    }
+
+    .mockup-tab:hover {
+      color: #94A3B8;
+    }
+
+    .mockup-tab.active {
+      background: rgba(0, 242, 254, 0.05);
+      color: var(--cyan);
+      border-color: rgba(0, 242, 254, 0.2);
+      text-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .mockup-body {
+      padding: 4.5rem 3rem;
+      position: relative;
+    }
+
+    .pane {
+      display: none;
+      animation: consoleSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .pane.active {
+      display: grid;
+    }
+
+    .pane-telemetry {
+      grid-template-columns: 1.11fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      min-height: 440px;
+    }
+
+    /* Core Dynamic Progress Orbit Dial */
+    .dial-wrapper {
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .svg-dial {
+      transform: rotate(-90deg);
+      filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.15));
+    }
+
+    .dial-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.03);
+      stroke-width: 8;
+    }
+
+    .dial-progress {
+      fill: none;
+      stroke: url(#cyan-grad);
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 565.48;
+      stroke-dashoffset: 226.19;
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .dial-inner-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .dial-inner-text h2 {
+      font-size: 3.2rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 0.2rem;
+      background: linear-gradient(to bottom, #fff, #A5B4FC);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .dial-inner-text p {
+      color: var(--cyan);
+      font-size: 0.65rem;
+      text-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    /* Tasks Checklist */
+    .roadmap-tasks {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .task {
+      display: flex;
+      align-items: center;
+      padding: 1.1rem 1.4rem;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .task:hover {
+      background: rgba(0, 242, 254, 0.02);
+      border-color: rgba(0, 242, 254, 0.3);
+      transform: translateX(6px);
+    }
+
+    .task-cb {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #334155;
+      border-radius: 4px;
+      margin-right: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0b0f19;
+    }
+
+    .task-cb::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--cyan);
+      border-radius: 2px;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .task.active-task .task-cb {
+      border-color: var(--cyan);
+    }
+
+    .task.active-task .task-cb::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .task span {
+      font-size: 0.8rem;
+      color: #94A3B8;
+    }
+
+    .task.active-task span {
+      color: #fff;
+    }
+
+    /* --- LEGAL AND COMPLIANCE PANES --- */
+    .pane-privacy, .pane-terms {
+      max-width: 850px;
+      margin: 0 auto;
+      max-height: 440px;
+      overflow-y: auto;
+      padding-right: 1.5rem;
+      padding-bottom: 3.5rem;
+    }
+
+    .pane-privacy::-webkit-scrollbar, .pane-terms::-webkit-scrollbar {
+      width: 6px;
+    }
+    .pane-privacy::-webkit-scrollbar-track, .pane-terms::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.01);
+    }
+    .pane-privacy::-webkit-scrollbar-thumb, .pane-terms::-webkit-scrollbar-thumb {
+      background: rgba(0, 242, 254, 0.2);
+      border-radius: 10px;
+    }
+
+    .priv-header, .terms-header, .support-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .priv-header h3, .terms-header h3, .support-header h3 {
+      font-size: 1.4rem;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .legal-meta {
+      font-size: 0.75rem;
+      color: var(--cyan);
+      margin-top: 0.25rem;
+      text-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .legal-section {
+      margin-bottom: 2rem;
+    }
+
+    .legal-section h4 {
+      color: #fff;
+      font-size: 0.95rem;
+      margin-bottom: 0.6rem;
+      border-left: 2px solid var(--cyan);
+      padding-left: 0.75rem;
+    }
+
+    .legal-section p {
+      color: #94A3B8;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      margin-bottom: 0.8rem;
+    }
+
+    .legal-list {
+      list-style: none;
+      padding-left: 1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .legal-list li {
+      color: #64748B;
+      font-size: 0.85rem;
+      position: relative;
+      padding-left: 1.2rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .legal-list li::before {
+      content: '▪';
+      position: absolute;
+      left: 0;
+      color: var(--purple-light);
+    }
+
+    /* --- MISSION CONTROL SUPPORT PANE --- */
+    .pane-support {
+      grid-template-columns: 1fr 1fr;
+      gap: 3.5rem;
+      align-items: stretch;
+      min-height: 440px;
+    }
+
+    .support-briefing {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .support-briefing p {
+      color: #94A3B8;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-comms {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 242, 254, 0.05);
+      border: 1px solid var(--cyan);
+      color: #fff;
+      font-weight: bold;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
+    }
+
+    .btn-comms:hover {
+      background: var(--cyan);
+      color: #050811;
+      box-shadow: 0 0 25px var(--cyan-glow);
+      transform: translateY(-2px);
+    }
+
+    .support-terminal-grid {
+      background: rgba(3, 5, 12, 0.6);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.2rem;
+    }
+
+    .tech-readout {
+      border-bottom: 1px dashed rgba(255,255,255,0.08);
+      padding-bottom: 0.8rem;
+    }
+
+    .tech-readout:last-child {
+      border: none;
+    }
+
+    .tech-label {
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .tech-value {
+      font-size: 0.8rem;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .tech-value.active-glow {
+      color: #10B981;
+      text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+    }
+
+    .terminal-ticker {
+      position: absolute;
+      bottom: 1rem;
+      right: 2rem;
+      font-size: 0.6rem;
+      color: rgba(0, 242, 254, 0.3);
+    }
+
+    /* --- FEATURE BLOCKS --- */
+    .features-section {
+      padding: 4rem 0 8rem;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 16px;
+      padding: 3rem 2.5rem;
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple-light));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(0, 242, 254, 0.2);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-icon {
+      font-size: 0.8rem;
+      color: var(--cyan);
+      margin-bottom: 2rem;
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border: 1px solid rgba(0, 242, 254, 0.2);
+      border-radius: 4px;
+      background: rgba(0, 242, 254, 0.02);
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .card p {
+      color: #64748B;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* --- FOOTER --- */
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 4rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p {
+      font-size: 0.75rem;
+      color: #334155;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      margin-left: 2rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--cyan);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 242, 254, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0); }
+    }
+
+    @keyframes consoleSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 868px) {
+      .pane-telemetry, .pane-support { grid-template-columns: 1fr; gap: 3rem; }
+      nav { flex-direction: column; gap: 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+      footer { flex-direction: column; gap: 1.5rem; }
+      .footer-links a { margin: 0 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="space-canvas"></canvas>
+  <div class="nebula"></div>
+
+  <div class="container">
+    
+    <!-- NAVIGATION HEADER -->
+    <nav>
+      <div class="logo mono"><span class="logo-box">Z</span> PROJECT Z</div>
+      <div class="nav-links mono">
+        <a href="#features">PROBLEM</a>
+        <a href="#features">FEATURES</a>
+        <a href="#features">HOW IT WORKS</a>
+        <a href="#features">FAQ</a>
+      </div>
+      <a href="#console-anchor" onclick="toggleConsoleView('support')" class="btn-nav mono">JOIN BETA</a>
+    </nav>
+
+    <!-- HERO INTRODUCTION -->
+    <header class="hero">
+      <div class="hero-badge mono">
+        <div class="badge-pulse"></div> Local Node Grid Connected // v1.0.0
+      </div>
+      <h1>PROJECT Z: LOCAL-FIRST<br>TELEMETRY ROADMAPS.</h1>
+      <p>An ultra-fast, local-only client that maps, parses, and ingests technical telemetry instantly into actionable roadmaps with absolute zero data tracking or database overhead.</p>
+      
+      <div class="hero-ctas">
+        <a href="#" class="btn btn-primary">Download for macOS (v1.0.0)</a>
+        <a href="#console-anchor" class="btn btn-secondary">Open Mission Control</a>
+      </div>
+    </header>
+
+    <!-- MAIN CONSOLE INTERACTION PLATFORM -->
+    <span id="console-anchor"></span>
+    <section class="mockup-section">
+      <div class="mockup-window">
+        
+        <div class="mockup-header">
+          <div class="window-dots">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+          </div>
+          
+          <div class="mockup-tabs mono">
+            <button id="btn-tab-telemetry" class="mockup-tab active" onclick="toggleConsoleView('telemetry')">telemetry_core.sh</button>
+            <button id="btn-tab-privacy" class="mockup-tab" onclick="toggleConsoleView('privacy')">privacy_policy.txt</button>
+            <button id="btn-tab-terms" class="mockup-tab" onclick="toggleConsoleView('terms')">terms_of_service.conf</button>
+            <button id="btn-tab-support" class="mockup-tab" onclick="toggleConsoleView('support')">mission_control.log</button>
+          </div>
+          
+          <div id="dir-path" class="mono" style="margin-left: auto; color: #334155; font-size: 0.7rem;">~/root/telemetry</div>
+        </div>
+
+        <div class="mockup-body">
+          
+          <!-- TAB 1: TELEMETRY DRILL-DOWN CONTAINER -->
+          <div id="pane-telemetry" class="pane pane-telemetry active">
+            <div class="dial-wrapper">
+              <svg class="svg-dial" width="200" height="200" viewBox="0 0 200 200">
+                <defs>
+                  <linearGradient id="cyan-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00F2FE" />
+                    <stop offset="100%" stop-color="#8E2DE2" />
+                  </linearGradient>
+                </defs>
+                <circle class="dial-bg" cx="100" cy="100" r="90"></circle>
+                <circle id="interactive-ring" class="dial-progress" cx="100" cy="100" r="90"></circle>
+              </svg>
+              <div class="dial-inner-text">
+                <h2 id="dial-pct" class="mono">60%</h2>
+                <p id="dial-counter" class="mono">3/5 MILESTONES DONE</p>
+              </div>
+            </div>
+
+            <div class="roadmap-tasks">
+              <div class="task active-task" onclick="clickTask(this, 1)">
+                <div class="task-cb"></div>
+                <span class="mono">Initialize Core Telemetry Router</span>
+              </div>
+              <div class="task active-task" onclick="clickTask(this, 2)">
+                <div class="task-cb"></div>
+                <span class="mono">Telemetry Intake String Hook</span>
+              </div>
+              <div class="task active-task" onclick="clickTask(this, 3)">
+                <div class="task-cb"></div>
+                <span class="mono">Map Volatile Local Memory Space</span>
+              </div>
+              <div class="task" onclick="clickTask(this, 4)">
+                <div class="task-cb"></div>
+                <span class="mono">Render Orbit Physics Rings</span>
+              </div>
+              <div class="task" onclick="clickTask(this, 5)">
+                <div class="task-cb"></div>
+                <span class="mono">Compile Clean Binary Output Layout</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: PRIVACY CHARTER -->
+          <div id="pane-privacy" class="pane pane-privacy">
+            <div class="priv-header">
+              <h3 class="mono">PROJECT Z PRIVACY POLICY</h3>
+              <p class="mono legal-meta">Effective Date: July 1, 2026 // Local Node Governance</p>
+            </div>
+            
+            <div class="legal-section">
+              <h4>1. Principle of Local-First Operation</h4>
+              <p>Project Z operates strictly as a local-first application client framework. All operational workflows, data processing pipelines, log parsing scripts, stack trace maps, and telemetry ingest vectors execute entirely on your physical machine runtime hardware environment.</p>
+            </div>
+
+            <div class="legal-section">
+              <h4>2. Zero Data Collection Architecture</h4>
+              <p>Because Project Z functions completely independent of centralized cloud instances, we maintain an architectural framework that prevents the identification, collection, aggregation, or indexing of user parameters:</p>
+              <ul class="legal-list">
+                <li><strong>No Telemetry Collection:</strong> The tool interprets data logs locally. No raw payload configurations or calculated metrics are broadcast over network sockets.</li>
+                <li><strong>No User Profiles:</strong> There are no profile setups, session tracking structures, verification pipelines, or identity databases required to use the app.</li>
+                <li><strong>No Browser Tracking:</strong> We use zero analytic tracking tools, persistent tracking cookies, tracking pixels, or remote traffic instrumentation arrays.</li>
+              </ul>
+            </div>
+
+            <div class="legal-section">
+              <h4>3. Ephemeral Memory Persistence</h4>
+              <p>Your processing structures live in temporary volatile client application memory maps. Data configuration logs can be completely cleared by resetting your system container or running the application flush utility. We do not use persistent network caches or silent secondary storage tracking protocols.</p>
+            </div>
+
+            <div class="legal-section">
+              <h4>4. Third-Party Transfers & Regulatory Standards</h4>
+              <p>Since data is never received by us, we never execute transfers, monetization procedures, or disclosure protocols to third parties. Our architecture aligns inherently with international strict data boundaries (including GDPR and CCPA mandates) by leaving data entirely inside the user's sovereign hardware containment perimeter.</p>
+            </div>
+
+            <div class="legal-section">
+              <h4>5. Direct Infrastructure Communications</h4>
+              <p>If you contact base camp via support channels (e.g., emailing support.projectz@gmail.com), your message context, metadata, and transmission address are kept confidential. They are referenced strictly to execute troubleshooting parameters and are never cross-referenced against your local project runtime data structures.</p>
+            </div>
+          </div>
+
+          <!-- TAB 3: EXTENDED LICENSING AGREEMENT -->
+          <div id="pane-terms" class="pane pane-terms">
+            <div class="terms-header">
+              <h3 class="mono">TERMS AND CONDITIONS OF USE</h3>
+              <p class="mono legal-meta">Last Revision: July 1, 2026 // Operational License</p>
+            </div>
+
+            <div class="legal-section">
+              <h4>1. Acceptance of Terminal Terms</h4>
+              <p>By executing the Project Z software package binary or accessing its web application elements, you agree to comply with and be bound by these Terms and Conditions. If you do not agree to these constraints, do not load or execute the binary.</p>
+            </div>
+
+            <div class="legal-section">
+              <h4>2. Local Software License & Scope</h4>
+              <p>Subject to compliance with these terms, Project Z grants you a limited, non-exclusive, non-transferable, revocable license to run the software client purely on personal computing nodes. You retain full and exclusive ownership of all code architectures, map templates, logs, and technical telemetry outputs generated within your execution environment.</p>
+            </div>
+
+            <div class="legal-section">
+              <h4>3. Prohibited Exploitation Frameworks</h4>
+              <p>You explicitly agree not to attempt to reverse-engineer, decompile, or derive the source code components of the closed runtime core, distribute altered variations of the client execution binaries, or deploy Project Z within automated loops where software execution delay bugs could lead to operational system crashes.</p>
+            </div>
+
+            <div class="legal-section">
+              <h4>4. Disclaimer of Warranties</h4>
+              <p>The system is deployed "AS IS" and "AS AVAILABLE" without any express or implied guarantees. Because compilation happens completely out of our control on local nodes, we offer zero warranty regarding continuous compatibility, error-free parsing execution, or the absolute protection of volatile memory matrices against hardware faults.</p>
+            </div>
+
+            <div class="legal-section">
+              <h4>5. Limitation of Legal Liability</h4>
+              <p>In no event shall the Project Z team or contributors be liable for loss of data logs, corrupted database arrays, processing latency drops, or hardware operational failures arising from running our ingestion hooks.</p>
+            </div>
+          </div>
+
+          <!-- TAB 4: MISSION INTAKE & SYSTEM SUPPORT GRID -->
+          <div id="pane-support" class="pane pane-support">
+            <div class="support-briefing">
+              <div class="support-header">
+                <h3 class="mono">// BETA COHORT INTAKE</h3>
+                <p class="mono" style="font-size: 0.7rem; color: var(--cyan); margin-top: 0.2rem;">INITIALIZE OPERATOR PROVISIONING</p>
+              </div>
+              <p>Ready to deploy Project Z on your local rig? Input your operational communication address below. Our automated backend gateway will instantly route an official orbital transmission containing your secure download credentials and v1.0.0 access tokens. We build in the dark so your workflows can run clean.</p>
+              
+              <form id="beta-form" onsubmit="handleBetaSubmit(event)" style="display: flex; gap: 0.75rem; max-width: 420px; margin-bottom: 1rem;">
+                <input type="email" id="beta-email" required placeholder="operator@constellation.io" 
+                       style="flex: 1; background: rgba(3, 5, 12, 0.8); border: 1px solid rgba(0, 242, 254, 0.2); padding: 0.8rem 1.2rem; border-radius: 8px; color: #fff; font-family: 'Space Mono', monospace; font-size: 0.85rem; outline: none; transition: border-color 0.3s;"
+                       onfocus="this.style.borderColor='var(--cyan)'" onblur="this.style.borderColor='rgba(0, 242, 254, 0.2)'">
+                <button type="submit" class="btn-comms mono" style="padding: 0 1.5rem; white-space: nowrap; font-size: 0.8rem; cursor: pointer;">
+                  SUBMIT DATA
+                </button>
+              </form>
+              <p id="form-status" class="mono" style="font-size: 0.75rem; color: var(--cyan); display: none;"></p>
+            </div>
+            
+            <div class="support-terminal-grid">
+              <div class="tech-readout">
+                <span class="tech-label mono">TARGET DESTINATION</span>
+                <span class="tech-value mono" style="color: var(--cyan);">support.projectz@gmail.com</span>
+              </div>
+              <div class="tech-readout">
+                <span class="tech-label mono">ENCRYPTION STATUS</span>
+                <span class="tech-value mono active-glow">SECURE (LOCAL AES-256)</span>
+              </div>
+              <div class="tech-readout">
+                <span class="tech-label mono">RESPONSE FREQUENCY</span>
+                <span class="tech-value mono">&lt; 24 ORBITAL HOURS</span>
+              </div>
+              <div class="tech-readout">
+                <span class="tech-label mono">SYSTEM UPTIME</span>
+                <span class="tech-value mono">100% CONTAINERIZED</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- STATUS LOGGER BAR -->
+          <div id="terminal-ticker" class="terminal-ticker mono">SYS STATUS // STANDBY</div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CORE VALUE TRIPLE GRID -->
+    <section id="features" class="features-section">
+      <div class="grid-container">
+        <div class="card">
+          <div class="card-icon mono">PRIVACY</div>
+          <h3 class="mono">Absolute Privacy by Design</h3>
+          <p>Data is strictly in-memory and processed locally on-device. No logins, no cloud tracking, and a clean "Data Not Collected" architecture.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon mono">INGESTION</div>
+          <h3 class="mono">Instant Telemetry Ingestion</h3>
+          <p>Highlight the engine's ability to take raw technical text strings and instantly parse them into live interactive milestones.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon mono">FEEDBACK</div>
+          <h3 class="mono">Tactile Mechanical Feedback</h3>
+          <p>Describe the ultra-smooth physics-based spring animations that make tracking milestones feel physically satisfying.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TERMINAL FOOTER LINKS -->
+    <footer>
+      <p class="mono">© 2026 PROJECT Z // ALL OPERATIONS CONTAINERIZED LOCAL HOST ONLY</p>
+      <div class="footer-links mono">
+        <a href="#console-anchor" onclick="toggleConsoleView('privacy')">PRIVACY POLICY</a>
+        <a href="#console-anchor" onclick="toggleConsoleView('terms')">TERMS & CONDITIONS</a>
+        <a href="#console-anchor" onclick="toggleConsoleView('support')">SUPPORT CENTER</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- CONTROL SYSTEM SCRIPTS -->
+  <script>
+    /* --- STARFIELD RENDERING ENGINE --- */
+    const canvas = document.getElementById('space-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    let mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initStars();
+    }
+
+    function initStars() {
+      stars = [];
+      const density = Math.floor((canvas.width * canvas.height) / 8000);
+      for (let i = 0; i < density; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 1.5,
+          speed: Math.random() * 0.05 + 0.02
+        });
+      }
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      
+      mouse.x += (mouse.targetX - mouse.x) * 0.08;
+      mouse.y += (mouse.targetY - mouse.y) * 0.08;
+
+      stars.forEach(star => {
+        let offsetX = (mouse.x - canvas.width / 2) * star.speed * 0.3;
+        let offsetY = (mouse.y - canvas.height / 2) * star.speed * 0.3;
+        
+        ctx.beginPath();
+        ctx.arc(star.x + offsetX, star.y + offsetY, star.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      requestAnimationFrame(animateStars);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('mousemove', (e) => {
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
+    });
+
+    resizeCanvas();
+    animateStars();
+
+    /* --- SPRING RADIAL LOGIC --- */
+    const totalTasks = 5;
+    const maxStrokeOffset = 565.48;
+
+    function clickTask(element, index) {
+      element.classList.toggle('active-task');
+      
+      const activeTasks = document.querySelectorAll('.task.active-task').length;
+      const percentage = Math.round((activeTasks / totalTasks) * 100);
+      
+      document.getElementById('dial-pct').innerText = percentage + '%';
+      document.getElementById('dial-counter').innerText = `${activeTasks}/${totalTasks} MILESTONES DONE`;
+      
+      const offset = maxStrokeOffset - (maxStrokeOffset * (activeTasks / totalTasks));
+      document.getElementById('interactive-ring').style.strokeDashoffset = offset;
+
+      const log = document.getElementById('terminal-ticker');
+      log.innerText = `NODE INTERACT // TASKS COMPLIANT: ${activeTasks} // ENGINE CODE: 0x${(activeTasks * 14).toString(16).toUpperCase()}`;
+    }
+
+    /* --- VIEW STATE ROUTER --- */
+    function toggleConsoleView(view) {
+      const panes = ['pane-telemetry', 'pane-privacy', 'pane-terms', 'pane-support'];
+      const tabs = ['btn-tab-telemetry', 'btn-tab-privacy', 'btn-tab-terms', 'btn-tab-support'];
+      
+      panes.forEach(p => document.getElementById(p).classList.remove('active'));
+      tabs.forEach(t => document.getElementById(t).classList.remove('active'));
+      
+      const dirPath = document.getElementById('dir-path');
+      const log = document.getElementById('terminal-ticker');
+
+      if (view === 'telemetry') {
+        document.getElementById('pane-telemetry').classList.add('active');
+        document.getElementById('btn-tab-telemetry').classList.add('active');
+        dirPath.innerText = '~/root/telemetry';
+        log.innerText = "SYS STATUS // TELEMETRY ENGINE ONLINE";
+      } else if (view === 'privacy') {
+        document.getElementById('pane-privacy').classList.add('active');
+        document.getElementById('btn-tab-privacy').classList.add('active');
+        dirPath.innerText = '~/root/privacy_policy.txt';
+        log.innerText = "LEGAL REPOSITORY // PRIVACY REGULATORY MATRICES ACTIVE";
+      } else if (view === 'terms') {
+        document.getElementById('pane-terms').classList.add('active');
+        document.getElementById('btn-tab-terms').classList.add('active');
+        dirPath.innerText = '~/root/terms_of_service.conf';
+        log.innerText = "LEGAL REPOSITORY // END USER LICENSE COMPLIANT";
+      } else if (view === 'support') {
+        document.getElementById('pane-support').classList.add('active');
+        document.getElementById('btn-tab-support').classList.add('active');
+        dirPath.innerText = '~/root/mission_control';
+        log.innerText = "COMMS STACK // INTAKE OVERVIEW LOADED";
+      }
+    }
+
+    /* --- ASYNCHRONOUS BACKEND TRANSMISSION HANDLING --- */
+    async function handleBetaSubmit(event) {
+      event.preventDefault();
+      const emailInput = document.getElementById('beta-email');
+      const statusText = document.getElementById('form-status');
+      const ticker = document.getElementById('terminal-ticker');
+      
+      statusText.style.display = 'block';
+      statusText.style.color = 'var(--text-muted)';
+      statusText.innerText = '// BROADCASTING BEACON TO SERVERLESS GATEWAY...';
+      ticker.innerText = "SYS STATUS // EXECUTING INTAKE TRANSMISSION";
+
+      try {
+        const response = await fetch('/api/join-beta', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailInput.value })
+        });
+
+        if (response.ok) {
+          statusText.style.color = '#10B981';
+          statusText.innerText = '// ACCESS GRANTED. CREDENTIAL PACKET TRANSMITTED INSTANTLY.';
+          ticker.innerText = "SYS STATUS // TRANSMISSION COMPLETE // SUCCESS";
+          emailInput.value = '';
+        } else {
+          throw new Error();
+        }
+      } catch (error) {
+        statusText.style.color = '#EF4444';
+        statusText.innerText = '// ERROR: RELAY PIPELINE PACKET FAULT. RETRY BEACON FORM.';
+        ticker.innerText = "SYS STATUS // PACKET LOSS DETECTED // HALT";
+      }
+    }
+  </script>
+</body>
+</html>

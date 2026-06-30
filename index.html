@@ -452,7 +452,7 @@
       color: #fff;
     }
 
-    /* --- LEGAL AND COMPLIANCE PANES --- */
+    /* --- LEGAL CONTENT VIEWPORTS (PRIVACY & TERMS) --- */
     .pane-privacy, .pane-terms {
       max-width: 850px;
       margin: 0 auto;
@@ -854,18 +854,18 @@
             </div>
 
             <div class="legal-section">
-              <h4>3. Ephemeral Memory Persistence</h4>
+              <h4>3. Waitlist Processing Transmissions</h4>
+              <p>To preserve complete data protection clarity, when an operator opts to use our Beta Intake link to check in, submission email text parameters are securely handled via the Formspree network relay module purely to serve as a notification pipeline bridge directly to our control inbox. This waitlist data is never cross-compiled against your offline client execution software environments.</p>
+            </div>
+
+            <div class="legal-section">
+              <h4>4. Ephemeral Memory Persistence</h4>
               <p>Your processing structures live in temporary volatile client application memory maps. Data configuration logs can be completely cleared by resetting your system container or running the application flush utility. We do not use persistent network caches or silent secondary storage tracking protocols.</p>
             </div>
 
             <div class="legal-section">
-              <h4>4. Third-Party Transfers & Regulatory Standards</h4>
-              <p>Since data is never received by us, we never execute transfers, monetization procedures, or disclosure protocols to third parties. Our architecture aligns inherently with international strict data boundaries (including GDPR and CCPA mandates) by leaving data entirely inside the user's sovereign hardware containment perimeter.</p>
-            </div>
-
-            <div class="legal-section">
-              <h4>5. Direct Infrastructure Communications</h4>
-              <p>If you contact base camp via support channels (e.g., emailing support.projectz@gmail.com), your message context, metadata, and transmission address are kept confidential. They are referenced strictly to execute troubleshooting parameters and are never cross-referenced against your local project runtime data structures.</p>
+              <h4>5. Third-Party Transfers & Regulatory Standards</h4>
+              <p>Since data is never received by us, we never execute transfers, monetization procedures, or disclosure protocols to third parties. Our architecture aligns inherently with international data boundaries (including GDPR and CCPA mandates) by leaving data entirely inside the user's sovereign hardware containment perimeter.</p>
             </div>
           </div>
 
@@ -873,7 +873,7 @@
           <div id="pane-terms" class="pane pane-terms">
             <div class="terms-header">
               <h3 class="mono">TERMS AND CONDITIONS OF USE</h3>
-              <p class="mono legal-meta">Last Revision: July 1, 2026 // Operational License</p>
+              <p class="mono legal-meta">Last Revision: July 1, 2026 // Custom Proprietary License</p>
             </div>
 
             <div class="legal-section">
@@ -949,7 +949,7 @@
       </div>
     </section>
 
-    <!-- CORE VALUE TRIPLE GRID -->
+    <!-- TRIPLE CARD CORE FEATURE GRID -->
     <section id="features" class="features-section">
       <div class="grid-container">
         <div class="card">
@@ -1078,12 +1078,12 @@
         document.getElementById('pane-privacy').classList.add('active');
         document.getElementById('btn-tab-privacy').classList.add('active');
         dirPath.innerText = '~/root/privacy_policy.txt';
-        log.innerText = "LEGAL REPOSITORY // PRIVACY REGULATORY MATRICES ACTIVE";
+        log.innerText = "LEGAL REPOSITORY // PRIVACY CHARTER BOOTED";
       } else if (view === 'terms') {
         document.getElementById('pane-terms').classList.add('active');
         document.getElementById('btn-tab-terms').classList.add('active');
         dirPath.innerText = '~/root/terms_of_service.conf';
-        log.innerText = "LEGAL REPOSITORY // END USER LICENSE COMPLIANT";
+        log.innerText = "LEGAL REPOSITORY // PROPRIETARY TERMS LOADED";
       } else if (view === 'support') {
         document.getElementById('pane-support').classList.add('active');
         document.getElementById('btn-tab-support').classList.add('active');
@@ -1092,7 +1092,7 @@
       }
     }
 
-    /* --- ASYNCHRONOUS BACKEND TRANSMISSION HANDLING --- */
+    /* --- STATIC SITE FORM SUBMISSION ENGINE --- */
     async function handleBetaSubmit(event) {
       event.preventDefault();
       const emailInput = document.getElementById('beta-email');
@@ -1101,19 +1101,23 @@
       
       statusText.style.display = 'block';
       statusText.style.color = 'var(--text-muted)';
-      statusText.innerText = '// BROADCASTING BEACON TO SERVERLESS GATEWAY...';
+      statusText.innerText = '// BROADCASTING BEACON TO EMAIL RELAY...';
       ticker.innerText = "SYS STATUS // EXECUTING INTAKE TRANSMISSION";
 
       try {
-        const response = await fetch('/api/join-beta', {
+        // paste your custom Formspree endpoint URL inside the single quotes below
+        const response = await fetch('https://formspree.io/f/mwvdndew', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
           body: JSON.stringify({ email: emailInput.value })
         });
 
         if (response.ok) {
           statusText.style.color = '#10B981';
-          statusText.innerText = '// ACCESS GRANTED. CREDENTIAL PACKET TRANSMITTED INSTANTLY.';
+          statusText.innerText = '// ACCESS GRANTED. CREDENTIAL PACKET SECURELY ROUTED TO INBOX.';
           ticker.innerText = "SYS STATUS // TRANSMISSION COMPLETE // SUCCESS";
           emailInput.value = '';
         } else {

@@ -231,12 +231,6 @@
     }
 
     /* --- THE COMMAND CONSOLE MOCKUP --- */
-    .mockup-section {
-      padding: 2rem 0 6rem;
-      display: flex;
-      justify-content: center;
-    }
-
     .mockup-window {
       background: var(--glass-bg);
       border: 1px solid var(--border-color);
@@ -854,8 +848,8 @@
             </div>
 
             <div class="legal-section">
-              <h4>3. Waitlist Processing Transmissions</h4>
-              <p>To preserve complete data protection clarity, when an operator opts to use our Beta Intake link to check in, submission email text parameters are securely handled via the Formspree network relay module purely to serve as a notification pipeline bridge directly to our control inbox. This waitlist data is never cross-compiled against your offline client execution software environments.</p>
+              <h4>3. Third-Party Waitlist Data Relay Protocol</h4>
+              <p>When an operator explicitly chooses to opt into our Beta Intake program by submitting their email address on this page, that data package is securely transmitted over TLS-encrypted network channels to our trusted data relay service partner, Formspree (Formspree, Inc.). Formspree processes and temporarily caches these text strings purely as a technical delivery middleman to route the notification straight to our command inbox. This intake data is never shared, never sold, and is completely decoupled from your offline client runtime computing environment.</p>
             </div>
 
             <div class="legal-section">
@@ -1105,8 +1099,8 @@
       ticker.innerText = "SYS STATUS // EXECUTING INTAKE TRANSMISSION";
 
       try {
-        // paste your custom Formspree endpoint URL inside the single quotes below
-        const response = await fetch('https://formspree.io/f/mwvdndew', {
+        // PASTE YOUR CUSTOM FORMSPREE ENDPOINT URL INSIDE THE SINGLE QUOTES BELOW
+        const response = await fetch('https://formspree.io/f/YOUR_FORM_ID_HERE', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',

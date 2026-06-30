@@ -679,6 +679,30 @@
       line-height: 1.7;
     }
 
+    /* --- TOAST NOTIFICATION STYLING --- */
+    .toast-msg {
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(7, 12, 28, 0.9);
+      border: 1px solid var(--cyan);
+      box-shadow: 0 10px 30px rgba(0, 242, 254, 0.2), inset 0 0 15px rgba(0, 242, 254, 0.1);
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.85rem;
+      z-index: 9999;
+      pointer-events: none;
+      transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(10px);
+      white-space: nowrap;
+    }
+
+    .toast-msg.show {
+      bottom: 2.5rem;
+    }
+
     /* --- FOOTER --- */
     footer {
       border-top: 1px solid rgba(255, 255, 255, 0.04);
@@ -730,6 +754,9 @@
   <canvas id="space-canvas"></canvas>
   <div class="nebula"></div>
 
+  <!-- MID-BOTTOM STATUS DOCK NOTIFICATION -->
+  <div id="toast-notification" class="toast-msg mono">// YOUR SPACECRAFT IS GETTING READY IN A FEW MONTHS</div>
+
   <div class="container">
     
     <!-- NAVIGATION HEADER -->
@@ -753,7 +780,7 @@
       <p>An ultra-fast, local-only client that maps, parses, and ingests technical telemetry instantly into actionable roadmaps with absolute zero data tracking or database overhead.</p>
       
       <div class="hero-ctas">
-        <a href="#" class="btn btn-primary">Download for macOS (v1.0.0)</a>
+        <button onclick="triggerToast()" class="btn btn-primary">Download for iOS & iPadOS (v1.0.0)</button>
         <a href="#console-anchor" class="btn btn-secondary">Open Mission Control</a>
       </div>
     </header>
@@ -834,7 +861,7 @@
             
             <div class="legal-section">
               <h4>1. Principle of Local-First Operation</h4>
-              <p>Project Z operates strictly as a local-first application client framework. All operational workflows, data processing pipelines, log parsing scripts, stack trace maps, and telemetry ingest vectors execute entirely on your physical machine runtime hardware environment.</p>
+              <p>Project Z operates strictly as a local-first application client framework. All operational workflows, data processing pipelines, log parsing scripts, stack trace maps, and telemetry ingest vectors execute entirely on your physical iOS or iPadOS device hardware environment.</p>
             </div>
 
             <div class="legal-section">
@@ -877,7 +904,7 @@
 
             <div class="legal-section">
               <h4>2. Local Software License & Scope</h4>
-              <p>Subject to compliance with these terms, Project Z grants you a limited, non-exclusive, non-transferable, revocable license to run the software client purely on personal computing nodes. You retain full and exclusive ownership of all code architectures, map templates, logs, and technical telemetry outputs generated within your execution environment.</p>
+              <p>Subject to compliance with these terms, Project Z grants you a limited, non-exclusive, non-transferable, revocable license to run the software client purely on mobile computing nodes. You retain full and exclusive ownership of all code architectures, map templates, logs, and technical telemetry outputs generated within your execution environment.</p>
             </div>
 
             <div class="legal-section">
@@ -903,7 +930,7 @@
                 <h3 class="mono">// BETA COHORT INTAKE</h3>
                 <p class="mono" style="font-size: 0.7rem; color: var(--cyan); margin-top: 0.2rem;">INITIALIZE OPERATOR PROVISIONING</p>
               </div>
-              <p>Ready to deploy Project Z on your local rig? Input your operational communication address below. Our automated backend gateway will instantly route an official orbital transmission containing your secure download credentials and v1.0.0 access tokens. We build in the dark so your workflows can run clean.</p>
+              <p>Ready to deploy Project Z on your local mobile rig? Input your operational communication address below. Our automated backend gateway will instantly route an official orbital transmission containing your secure download credentials and access tokens. We build in the dark so your workflows can run clean.</p>
               
               <form id="beta-form" onsubmit="handleBetaSubmit(event)" style="display: flex; gap: 0.75rem; max-width: 420px; margin-bottom: 1rem;">
                 <input type="email" id="beta-email" required placeholder="operator@constellation.io" 
@@ -949,7 +976,7 @@
         <div class="card">
           <div class="card-icon mono">PRIVACY</div>
           <h3 class="mono">Absolute Privacy by Design</h3>
-          <p>Data is strictly in-memory and processed locally on-device. No logins, no cloud tracking, and a clean "Data Not Collected" architecture.</p>
+          <p>Data is strictly in-memory and processed locally on your iOS device. No logins, no cloud tracking, and a clean "Data Not Collected" architecture.</p>
         </div>
 
         <div class="card">
@@ -1031,6 +1058,16 @@
 
     resizeCanvas();
     animateStars();
+
+    /* --- TOAST INTERACTIVE TRIGGER --- */
+    function triggerToast() {
+      const toast = document.getElementById('toast-notification');
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4000);
+    }
 
     /* --- SPRING RADIAL LOGIC --- */
     const totalTasks = 5;

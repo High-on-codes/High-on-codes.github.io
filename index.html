@@ -333,7 +333,7 @@
   .feature-card h3{font-size:17px;margin-bottom:11px;font-family:'JetBrains Mono',monospace;}
   .feature-card p{color:var(--silver);font-size:13.8px;line-height:1.7;}
 
-  /* ---------- Interactive Cascade Teaser Box ---------- */
+  /* ---------- Try It Input Block Layout Realignment ---------- */
   .teaser-wrap{
     background:var(--panel); border:1px solid var(--border); border-radius:22px;
     padding:44px; box-shadow:0 30px 90px -40px rgba(0,255,255,0.15); text-align: left;
@@ -343,21 +343,28 @@
   .teaser-bar span{width:9px; height:9px; border-radius:50%; background:#232a3c;}
   .teaser-bar .t{font-size:11px; color:var(--faint); margin-left:8px; letter-spacing:.05em;}
   
-  .teaser-input-deck {
-    display: flex; align-items: center; gap:16px; width: 100%;
-    background: rgba(255,255,255,0.01); border-bottom: 1px solid var(--border);
-    padding: 8px 4px 12px; margin-bottom: 16px;
+  /* Fixed Row Layout Framework (Screenshot 2026-07-01 at 9.08.05 PM.png Fix) */
+  .teaser-input-row {
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    gap: 16px; 
+    width: 100%;
+    border-bottom: 1px solid var(--border); 
+    padding-bottom: 12px;
+    margin-bottom: 16px;
   }
-  .teaser-input-deck .prompt{ color:var(--cyan); font-size:16px; font-weight:700; }
+  .teaser-input-row .prompt{ font-family:'JetBrains Mono',monospace; color:var(--cyan); font-size:16px; font-weight:700; }
   .teaser-field-wrapper { flex: 1; text-align: left; }
   #topicInput{
     background:transparent; border:none; outline:none;
-    font-size:15px; color:var(--white); width:100%; padding:0; margin:0;
+    font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--white);
+    width:100%; padding:0; margin:0;
   }
   #topicInput::placeholder{color:var(--faint);}
   
   #generateBtn{
-    font-weight:700; font-size:12.5px;
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px;
     background:var(--cyan); color:var(--bg); border:none; border-radius:8px;
     padding:12px 24px; cursor:pointer; letter-spacing:.03em;
     box-shadow:0 0 24px -8px var(--cyan-glow);
@@ -549,7 +556,7 @@
 <canvas id="stars"></canvas>
 <div class="void-gradient"></div>
 
-<!-- FIXED THE ID CONNECTION OVER HERE -->
+<!-- POPUP SYSTEM TOAST BANNER -->
 <div class="toast-container mono" id="system-toast-dock">// YOUR SPACECRAFT WILL BE READY IN 2 TO 3 MONTHS</div>
 
 <nav>
@@ -731,7 +738,7 @@
       </div>
     </section>
 
-    <!-- INTERACTIVE TEASER -->
+    <!-- INTERACTIVE TEASER (Fixed Horizontal Alignment Row) -->
     <section id="teaser">
       <div class="section-head reveal">
         <span class="eyebrow mono">Live Preview</span>

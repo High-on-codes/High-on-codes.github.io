@@ -182,15 +182,29 @@
       color: #94A3B8;
       font-size: 1.25rem;
       max-width: 760px;
-      margin: 0 auto 3.5rem;
+      margin: 0 auto 2.5rem;
       font-weight: 300;
     }
 
     .hero-ctas {
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .cta-buttons {
+      display: flex;
       gap: 1.5rem;
       justify-content: center;
       flex-wrap: wrap;
+    }
+
+    .requirement-notice {
+      font-size: 0.75rem;
+      color: #EF4444;
+      text-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
     }
 
     .btn {
@@ -209,6 +223,7 @@
     .btn-primary {
       background: linear-gradient(135deg, #00F2FE 0%, #0072FF 100%);
       color: #050811;
+      border: none;
       box-shadow: 0 10px 30px rgba(0, 242, 254, 0.2);
     }
 
@@ -231,6 +246,12 @@
     }
 
     /* --- THE COMMAND CONSOLE MOCKUP --- */
+    .mockup-section {
+      padding: 2rem 0 6rem;
+      display: flex;
+      justify-content: center;
+    }
+
     .mockup-window {
       background: var(--glass-bg);
       border: 1px solid var(--border-color);
@@ -774,14 +795,17 @@
     <!-- HERO INTRODUCTION -->
     <header class="hero">
       <div class="hero-badge mono">
-        <div class="badge-pulse"></div> Local Node Grid Connected // v1.0.0
+        <div class="badge-pulse"></div> Local Mobile Grid Connected // v1.0.0
       </div>
       <h1>PROJECT Z: LOCAL-FIRST<br>TELEMETRY ROADMAPS.</h1>
       <p>An ultra-fast, local-only client that maps, parses, and ingests technical telemetry instantly into actionable roadmaps with absolute zero data tracking or database overhead.</p>
       
       <div class="hero-ctas">
-        <button onclick="triggerToast()" class="btn btn-primary">Download for iOS & iPadOS (v1.0.0)</button>
-        <a href="#console-anchor" class="btn btn-secondary">Open Mission Control</a>
+        <div class="cta-buttons">
+          <button onclick="triggerToast()" class="btn btn-primary">Download for iOS & iPadOS (v1.0.0)</button>
+          <a href="#console-anchor" class="btn btn-secondary">Open Mission Control</a>
+        </div>
+        <span class="requirement-notice mono">⚠️ CRITICAL REQUIREMENT: Requires compatible device supporting Apple Intelligence</span>
       </div>
     </header>
 
@@ -861,17 +885,12 @@
             
             <div class="legal-section">
               <h4>1. Principle of Local-First Operation</h4>
-              <p>Project Z operates strictly as a local-first application client framework. All operational workflows, data processing pipelines, log parsing scripts, stack trace maps, and telemetry ingest vectors execute entirely on your physical iOS or iPadOS device hardware environment.</p>
+              <p>Project Z operates strictly as a local-first application client framework. All operational workflows, data processing pipelines, log parsing scripts, stack trace maps, and telemetry ingest vectors execute entirely on your physical iOS or iPadOS device hardware environment using local Neural Engine frameworks.</p>
             </div>
 
             <div class="legal-section">
-              <h4>2. Zero Data Collection Architecture</h4>
-              <p>Because Project Z functions completely independent of centralized cloud instances, we maintain an architectural framework that prevents the identification, collection, aggregation, or indexing of user parameters:</p>
-              <ul class="legal-list">
-                <li><strong>No Telemetry Collection:</strong> The tool interprets data logs locally. No raw payload configurations or calculated metrics are broadcast over network sockets.</li>
-                <li><strong>No User Profiles:</strong> There are no profile setups, session tracking structures, verification pipelines, or identity databases required to use the app.</li>
-                <li><strong>No Browser Tracking:</strong> We use zero analytic tracking tools, persistent tracking cookies, tracking pixels, or remote traffic instrumentation arrays.</li>
-              </ul>
+              <h4>2. Zero Data Collection & Apple Intelligence Constraints</h4>
+              <p>Because Project Z functions completely independent of centralized cloud instances, we maintain an architectural framework that leaves data entirely in your custody. This application relies exclusively on hardware configured with **Apple Intelligence** to run advanced parsing logic locally. No raw payload configurations or calculated metrics are broadcast over network sockets; everything is computed securely on your own device silicon.</p>
             </div>
 
             <div class="legal-section">
@@ -903,8 +922,8 @@
             </div>
 
             <div class="legal-section">
-              <h4>2. Local Software License & Scope</h4>
-              <p>Subject to compliance with these terms, Project Z grants you a limited, non-exclusive, non-transferable, revocable license to run the software client purely on mobile computing nodes. You retain full and exclusive ownership of all code architectures, map templates, logs, and technical telemetry outputs generated within your execution environment.</p>
+              <h4>2. Local Software License & Hardware Scope</h4>
+              <p>Subject to compliance with these terms, Project Z grants you a limited, non-exclusive, non-transferable, revocable license to run the software client purely on personal mobile computing nodes. You acknowledge that proper operation requires physical hardware capable of executing local Apple Intelligence processing pipelines, and deployment on un-supported silicon voids operational support structures.</p>
             </div>
 
             <div class="legal-section">
@@ -953,8 +972,8 @@
                 <span class="tech-value mono active-glow">SECURE (LOCAL AES-256)</span>
               </div>
               <div class="tech-readout">
-                <span class="tech-label mono">RESPONSE FREQUENCY</span>
-                <span class="tech-value mono">&lt; 24 ORBITAL HOURS</span>
+                <span class="tech-label mono">REQUIRED SILESION</span>
+                <span class="tech-value mono" style="color: #EF4444;">APPLE INTELLIGENCE REQ.</span>
               </div>
               <div class="tech-readout">
                 <span class="tech-label mono">SYSTEM UPTIME</span>
@@ -1060,11 +1079,20 @@
     animateStars();
 
     /* --- TOAST INTERACTIVE TRIGGER --- */
+    let toastTimeout;
     function triggerToast() {
       const toast = document.getElementById('toast-notification');
+      
+      // Reset if clicked rapidly
+      toast.classList.remove('show');
+      clearTimeout(toastTimeout);
+      
+      // Force trigger DOM reflow to allow immediate re-animation
+      void toast.offsetWidth;
+      
       toast.classList.add('show');
       
-      setTimeout(() => {
+      toastTimeout = setTimeout(() => {
         toast.classList.remove('show');
       }, 4000);
     }

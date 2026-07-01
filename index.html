@@ -268,7 +268,6 @@
     display: flex; align-items: center; justify-content: center; transition: all 0.2s;
   }
   
-  /* Dynamic Verification States linked via JavaScript mapping mechanics */
   .cosmic-node-anchor.completed-node .cosmic-globe-sphere {
     background: radial-gradient(circle at 35% 35%, #10b981 0%, #03140f 80%) !important;
     box-shadow: 0 0 18px rgba(16,185,129,0.5) !important;
@@ -550,7 +549,7 @@
 <canvas id="stars"></canvas>
 <div class="void-gradient"></div>
 
-<!-- POPUP SYSTEM TOAST BANNER -->
+<!-- FIXED THE ID CONNECTION OVER HERE -->
 <div class="toast-container mono" id="system-toast-dock">// YOUR SPACECRAFT WILL BE READY IN 2 TO 3 MONTHS</div>
 
 <nav>
@@ -649,7 +648,6 @@
                   <path d="M50,40 Q150,120 50,200 T150,360" fill="none" stroke="rgba(0,255,255,0.3)" stroke-width="1" stroke-dasharray="3,3"/>
                 </svg>
 
-                <!-- Added dynamic step check toggling matrices directly onto node structures -->
                 <div class="cosmic-node-anchor completed-node" id="node-0" onclick="toggleAppNode(0, 'Introduction to Neural Networks')">
                   <div class="cosmic-globe-sphere">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -747,7 +745,7 @@
           <div class="t mono">roadmap_engine.local — awaiting input</div>
         </div>
 
-        <div class="teaser-input-deck">
+        <div class="teaser-input-row">
           <span class="prompt mono">&gt;</span>
           <div class="teaser-field-wrapper">
             <input id="topicInput" type="text" placeholder="e.g. Build a Rocket" maxlength="46" autocomplete="off">
@@ -825,7 +823,7 @@
       </div>
     </section>
 
-    <!-- COHORT TERMINAL -->
+    <!-- MISSION CONTROL COHORT PANEL DOCK -->
     <section id="beta-intake" class="intake-section">
       <div class="terminal-window">
         
@@ -887,7 +885,7 @@
       </div>
     </section>
 
-    <!-- DOWNLOAD ACTION SECTORS -->
+    <!-- ENTRY DOWNLOAD ACCENTS -->
     <section class="cta-section reveal" id="download">
       <span class="eyebrow mono">Ready for launch</span>
       <h2>Chart your next roadmap tonight.</h2>
@@ -969,14 +967,11 @@
 
 <script>
   /* --- STEP COMPLETION AND AUTOMATIC PROGRESS METRICS TRACKER --- */
-  // Initial state maps tracking 1 node completed by default matching image 0001
   let nodeStates = [true, false, false]; 
   const totalAppSectors = 18;
 
   function toggleAppNode(index, title) {
     playAudioEffect('click');
-    
-    // Toggle state selection
     nodeStates[index] = !nodeStates[index];
     
     const nodeElement = document.getElementById(`node-${index}`);
@@ -986,33 +981,33 @@
       nodeElement.classList.remove('completed-node');
     }
     
-    // Calculate total active completions
     const completedCount = nodeStates.filter(Boolean).length;
-    
-    // Calculate dynamic math arrays matching screenshot structures
     const baseCurriculumDepth = 180; 
     const calculatedQuantumRemaining = baseCurriculumDepth - (completedCount * 10);
     const progressPercentage = Math.round((completedCount / totalAppSectors) * 100);
     
-    // Re-render strings inside elements
     document.getElementById('app-quantum-val').innerText = `${calculatedQuantumRemaining} MIN LEFT`;
     document.getElementById('app-pct-lbl').innerText = `PROCESSING TELEMETRY // ${completedCount}/${totalAppSectors} PHASES COMPLETED (${progressPercentage}%)`;
     document.getElementById('app-progress-bar').style.width = `${progressPercentage}%`;
     
-    // Trigger pop-up summary inspection details
     triggerInAppModal(title);
   }
 
   /* --- TOAST SYSTEM ALERTS ANIMATOR --- */
-  let toastTimeout = null;
+  let toastTimer = null;
   function triggerSpacecraftToast() {
     playAudioEffect('chime');
     const toast = document.getElementById('system-toast-dock');
+    
     toast.classList.remove('active-toast');
-    clearTimeout(toastTimeout);
+    clearTimeout(toastTimer);
+    
     void toast.offsetWidth;
     toast.classList.add('active-toast');
-    toastTimeout = setTimeout(() => { toast.classList.remove('active-toast'); }, 4500);
+    
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('active-toast');
+    }, 4500);
   }
 
   /* --- IN-APP ACTIVE VIEW STATES PANEL ROUTING --- */
@@ -1150,6 +1145,45 @@
         playAudioEffect('fail');
       }
     });
+  }
+
+  /* --- AUDIO ACOUSTICAL SIGNAL FREQUENCY GENERATOR --- */
+  let audioCtx = null;
+  function initAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  function playAudioEffect(type) {
+    try {
+      initAudio();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+
+      if (type === 'blip') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(880, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.1);
+        gainNode.gain.setValueAtTime(0.04, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+        osc.start(now); osc.stop(now + 0.1);
+      } else if (type === 'click') {
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(120, now);
+        osc.frequency.setValueAtTime(40, now + 0.02);
+        gainNode.gain.setValueAtTime(0.15, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        osc.start(now); osc.stop(now + 0.04);
+      } else if (type === 'chime') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(783.99, now + 0.08);
+        gainNode.gain.setValueAtTime(0.03, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc.start(now); osc.stop(now + 0.25);
+      } else if (type === 'fail') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(140, now);
+        osc.frequency.linearRampToValueAtTime(85, now + 0.3);
+        gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now); osc.stop(now + 0.3);
+      }
+    } catch(e){}
   }
 
   /* ---------- Ambient Twinkle Starfield Canvas Engine ---------- */

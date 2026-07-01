@@ -340,11 +340,10 @@
   }
   @media (max-width:640px){.teaser-wrap{padding:26px 20px;}}
   .teaser-bar{border-bottom:1px dashed var(--border); padding-bottom:12px; margin-bottom: 24px;}
-  .teaser-bar .dots-line { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .teaser-bar span { width:9px; height:9px; border-radius:50%; background:#232a3c; }
-  .teaser-bar .t{font-family: 'JetBrains Mono', monospace; font-size:11px; color:var(--faint); letter-spacing:.05em;}
+  .teaser-bar span{width:9px; height:9px; border-radius:50%; background:#232a3c;}
+  .teaser-bar .t{font-size:11px; color:var(--faint); margin-left:8px; letter-spacing:.05em;}
   
-  /* Fixed Row Layout Framework (Screenshot 2026-07-01 at 9.08.05 PM.png Fix) */
+  /* Row Layout Alignment */
   .teaser-input-row {
     display: flex; 
     align-items: center; 
@@ -377,7 +376,7 @@
     padding: 0;
     margin: 0;
   }
-  #topicInput::placeholder { color: var(--faint); }
+  #topicInput::placeholder{color:var(--faint);}
   
   #generateBtn {
     font-family: 'JetBrains Mono', monospace;
@@ -393,7 +392,6 @@
     box-shadow: 0 0 24px -8px var(--cyan-glow);
     transition: transform .25s cubic-bezier(.2, .9, .3, 1.3);
     white-space: nowrap;
-    flex-shrink: 0;
   }
   #generateBtn:hover { transform: translateY(-2px) scale(1.03); }
   
@@ -424,7 +422,7 @@
   .node-body h4 { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 5px; }
   .node-body p { font-size: 11.5px; color: var(--faint); letter-spacing: .02em; }
   .node-tag {
-    display: inline-block; font-size: 9.5px; color: var(--purple); border: 1px solid rgba(138,111,255,0.35); border-radius: 5px; padding: 2px 7px; margin-top: 8px; letter-spacing: .06em;
+    display: inline-block; font-size: 9.5px; color: var(--purple); border: 1px solid rgba(138,111,255,0.35); border-radius: 5px; padding: 2px 7px; margin-top: 8px; letter-spacing:.06em;
   }
   .hint-line { font-size: 11.5px; color: var(--faint); margin-top: 30px; }
   .hint-line .cur { display: inline-block; width: 7px; height: 13px; background: var(--cyan); vertical-align: middle; margin-left: 2px; animation: blink 1s step-end infinite; }
@@ -566,7 +564,7 @@
   }
   .legal-overlay.active-panel .legal-container { transform: translateY(0); }
   .legal-window-header { padding: 1.2rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  .legal-close-btn { background: transparent; border: 1px solid var(--border); color: var(--silver); padding: 6px 14px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .legal-close-btn { background: transparent; border: 1px solid var(--border); color: var(--silver); padding: 6px 14px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
   .legal-close-btn:hover { border-color: #ef4444; color: #ef4444; }
   .legal-content-body { padding: 2.5rem 2rem; overflow-y: auto; font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.7; color: var(--silver); }
   .legal-content-body::-webkit-scrollbar { width: 6px; }
@@ -1307,8 +1305,9 @@
   }
   function lowerFirst(topic){ return topic.charAt(0).toLowerCase() + topic.slice(1); }
 
+  /* FIXED SYNTAX SCOPE FAULT VARIABLE RIGHT HERE */
   function runQuickTopic(topicName) {
-    document.getElementById('topicInput').value = topicTitle = topicName;
+    document.getElementById('topicInput').value = topicName;
     generate(topicName);
   }
 

@@ -333,7 +333,7 @@
   .feature-card h3{font-size:17px;margin-bottom:11px;font-family:'JetBrains Mono',monospace;}
   .feature-card p{color:var(--silver);font-size:13.8px;line-height:1.7;}
 
-  /* ---------- RE-ENGINEERED HORIZONTAL PROMPT ROW INTERFACE (Screenshot 2026-07-01 at 9.08.05 PM.png Fix) ---------- */
+  /* ---------- Try It Input Block Layout Realignment ---------- */
   .teaser-wrap{
     background:var(--panel); border:1px solid var(--border); border-radius:22px;
     padding:44px; box-shadow:0 30px 90px -40px rgba(0,255,255,0.15); text-align: left;
@@ -344,13 +344,14 @@
   .teaser-bar span { width:9px; height:9px; border-radius:50%; background:#232a3c; }
   .teaser-bar .t{font-family: 'JetBrains Mono', monospace; font-size:11px; color:var(--faint); letter-spacing:.05em;}
   
-  /* Flawless Inline Row Alignment Frame */
+  /* Fixed Row Layout Framework (Screenshot 2026-07-01 at 9.08.05 PM.png Fix) */
   .teaser-input-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    gap: 16px; 
     width: 100%;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border); 
     padding-bottom: 12px;
     margin-bottom: 16px;
   }
@@ -398,6 +399,7 @@
   
   .quick-topics { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 20px; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 24px; }
   .quick-topic {
+    font-family: 'JetBrains Mono', monospace;
     font-size: 11px; color: var(--silver); border: 1px solid var(--border); border-radius: 20px; padding: 6px 13px; cursor: pointer;
     background: transparent; transition: border-color .2s ease, color .2s ease;
   }
@@ -564,7 +566,7 @@
   }
   .legal-overlay.active-panel .legal-container { transform: translateY(0); }
   .legal-window-header { padding: 1.2rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  .legal-close-btn { background: transparent; border: 1px solid var(--border); color: var(--silver); padding: 6px 14px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .legal-close-btn { background: transparent; border: 1px solid var(--border); color: var(--silver); padding: 6px 14px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
   .legal-close-btn:hover { border-color: #ef4444; color: #ef4444; }
   .legal-content-body { padding: 2.5rem 2rem; overflow-y: auto; font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.7; color: var(--silver); }
   .legal-content-body::-webkit-scrollbar { width: 6px; }
@@ -783,14 +785,14 @@
           <div class="teaser-field-wrapper">
             <input id="topicInput" type="text" placeholder="e.g. Build a Rocket" maxlength="46" autocomplete="off">
           </div>
-          <button id="generateBtn" class="mono">Generate Roadmap</button>
+          <button id="generateBtn" class="mono" onclick="generate(document.getElementById('topicInput').value)">Generate Roadmap</button>
         </div>
 
         <div class="quick-topics">
-          <button class="quick-topic mono" data-topic="Build a Rocket">Build a Rocket</button>
-          <button class="quick-topic mono" data-topic="Launch a Podcast">Launch a Podcast</button>
-          <button class="quick-topic mono" data-topic="Learn Piano">Learn Piano</button>
-          <button class="quick-topic mono" data-topic="Ship a Startup">Ship a Startup</button>
+          <button class="quick-topic mono" onclick="runQuickTopic('Build a Rocket')">Build a Rocket</button>
+          <button class="quick-topic mono" onclick="runQuickTopic('Launch a Podcast')">Launch a Podcast</button>
+          <button class="quick-topic mono" onclick="runQuickTopic('Learn Piano')">Learn Piano</button>
+          <button class="quick-topic mono" onclick="runQuickTopic('Ship a Startup')">Ship a Startup</button>
         </div>
 
         <div class="node-track" id="nodeTrack"></div>
@@ -1290,7 +1292,6 @@
   const generateBtn = document.getElementById('generateBtn');
   const nodeTrack = document.getElementById('nodeTrack');
   const hintLine = document.getElementById('hintLine');
-  const quickTopics = document.querySelectorAll('.quick-topic');
 
   const templates = [
     { verb: 'Research the fundamentals of', tag: 'DISCOVERY' },
@@ -1305,6 +1306,11 @@
     return t.length > 46 ? t.slice(0, 46) + '…' : t;
   }
   function lowerFirst(topic){ return topic.charAt(0).toLowerCase() + topic.slice(1); }
+
+  function runQuickTopic(topicName) {
+    document.getElementById('topicInput').value = topicTitle = topicName;
+    generate(topicName);
+  }
 
   async function generate(rawTopic){
     if(generating) return;
@@ -1345,6 +1351,9 @@
     generateBtn.textContent = 'Generate Roadmap';
     generating = false;
   }
+
+  function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
+  topicInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') generate(topicInput.value); });
 </script>
 
 </body>

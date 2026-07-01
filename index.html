@@ -733,6 +733,54 @@
       line-height: 1.7;
     }
 
+    /* INTERACTIVE DIAGNOSTIC LOG STRIP */
+    .validator-container {
+      margin-top: 1.5rem;
+      background: rgba(3, 5, 12, 0.5);
+      border: 1px dashed rgba(0, 242, 254, 0.2);
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
+
+    .validator-select {
+      width: 100%;
+      background: #050811;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.6rem;
+      border-radius: 4px;
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      outline: none;
+      margin-top: 0.8rem;
+      cursor: pointer;
+    }
+
+    .validator-screen {
+      margin-top: 1rem;
+      background: #02040a;
+      border-radius: 4px;
+      padding: 1rem;
+      min-height: 55px;
+      font-size: 0.75rem;
+      border-left: 3px solid #334155;
+    }
+
+    /* STREAMING LOG WRAPPER */
+    .stream-terminal {
+      background: #02040a !important;
+      border: 1px solid rgba(0, 242, 254, 0.3) !important;
+      font-family: 'Space Mono', monospace;
+      padding: 1.5rem !important;
+      font-size: 0.7rem;
+      line-height: 1.5;
+      color: #10B981;
+      overflow-y: auto;
+      max-height: 180px;
+      text-align: left;
+      display: none;
+    }
+
     /* --- FAQ ACCORDION --- */
     .faq-wrapper {
       max-width: 850px;
@@ -1059,12 +1107,12 @@
 
           <!-- TAB 4: MISSION INTAKE & SYSTEM SUPPORT GRID -->
           <div id="pane-support" class="pane pane-support">
-            <div class="support-briefing">
+            <div class="support-briefing" id="intake-form-wrapper">
               <div class="support-header">
                 <h3 class="mono">// BETA COHORT INTAKE</h3>
                 <p class="mono" style="font-size: 0.7rem; color: var(--cyan); margin-top: 0.2rem;">INITIALIZE OPERATOR PROVISIONING</p>
               </div>
-              <p>Ready to deploy Project Z on your local mobile rig? Input your operational communication address below. Our automated backend gateway will instantly route an official orbital transmission containing your secure download credentials and access tokens. We build in the dark so your workflows can run clean.</p>
+              <p>Ready to deploy Project Z on your local mobile rig? Input your operational communication address below. Our automated backend gateway will instantly route an official orbital transmission containing your secure download credentials.</p>
               
               <form id="beta-form" onsubmit="handleBetaSubmit(event)" style="display: flex; gap: 0.75rem; max-width: 420px; margin-bottom: 1rem;">
                 <input type="email" id="beta-email" name="email" required placeholder="operator@constellation.io" 
@@ -1076,6 +1124,9 @@
               </form>
               <p id="form-status" class="mono" style="font-size: 0.75rem; color: var(--cyan); display: none;"></p>
             </div>
+
+            <!-- LIVE STREAM TERMINAL CONTAINER -->
+            <div id="terminal-stream-box" class="stream-terminal mono"></div>
             
             <div class="support-terminal-grid">
               <div class="tech-readout">
@@ -1147,6 +1198,20 @@
           <div class="card-icon mono">STEP 02</div>
           <h3>Neural Engine Breakdown</h3>
           <p>Leveraging Apple Intelligence hardware primitives, local processing parsers analyze data stacks, sort dependency maps, and build milestone metrics directly inside your secure enclosure.</p>
+          
+          <!-- INTERACTIVE DIAGNOSTIC ACCENT INTERFACE -->
+          <div class="validator-container">
+            <span class="tech-label mono" style="color: var(--cyan);">// RUN ON-DEVICE HARWARE CHECK</span>
+            <select id="chip-selector" class="validator-select" onchange="runChipDiagnostic()">
+              <option value="">-- SELECT HARDWARE ARCHITECTURE --</option>
+              <option value="fail_a15">Apple A15 Bionic (iPhone 13 / 14)</option>
+              <option value="fail_a16">Apple A16 Bionic (iPhone 15)</option>
+              <option value="pass_a17">Apple A17 Pro (iPhone 15 Pro)</option>
+              <option value="pass_m1">Apple M1 / M2 / M3 Silicon</option>
+              <option value="pass_m4">Apple M4 Ultra Matrix</option>
+            </select>
+            <div id="validator-readout" class="validator-screen mono" style="color: #475569;">[STANDBY] AWAITING CORE BALANCER INPUT...</div>
+          </div>
         </div>
         <div class="card">
           <div class="card-icon mono">STEP 03</div>
@@ -1262,6 +1327,34 @@
     resizeCanvas();
     animateStars();
 
+    /* --- HARDWARE VALIDATOR METRICS ENGINE --- */
+    function runChipDiagnostic() {
+      const selection = document.getElementById('chip-selector').value;
+      const display = document.getElementById('validator-readout');
+      
+      if (!selection) {
+        display.style.color = '#475569';
+        display.style.borderLeftColor = '#334155';
+        display.innerText = '[STANDBY] AWAITING CORE BALANCER INPUT...';
+        return;
+      }
+      
+      display.style.color = 'var(--cyan)';
+      display.innerText = '[RUNNING] VERIFYING NEURAL CORES ARCHITECTURE MAPS...';
+      
+      setTimeout(() => {
+        if (selection.startsWith('fail')) {
+          display.style.color = '#EF4444';
+          display.style.borderLeftColor = '#EF4444';
+          display.innerText = '[HALT] NEURAL MATRIX INSUFFICIENT. DETECTING LACK OF LOCAL APPLE INTELLIGENCE CORES.';
+        } else {
+          display.style.color = '#10B981';
+          display.style.borderLeftColor = '#10B981';
+          display.innerText = '[READY] CORES ENCLOSED SECURELY. COMPATIBLE LOCAL ENGINE PIPELINE CONFIRMED.';
+        }
+      }, 600);
+    }
+
     /* --- FAQ INTERACTIVE ACCORDION TOGGLE --- */
     function toggleFaq(element) {
       const activeItems = document.querySelectorAll('.faq-item.active-faq');
@@ -1341,41 +1434,84 @@
       }
     }
 
+    /* --- DYNAMIC LIVE TERMINAL LOG STREAMER --- */
+    function streamTerminalLogs(onComplete) {
+      const terminal = document.getElementById('terminal-stream-box');
+      const formWrapper = document.getElementById('intake-form-wrapper');
+      
+      formWrapper.style.display = 'none';
+      terminal.style.display = 'block';
+      terminal.innerHTML = '';
+      
+      const logs = [
+        "&gt; INITIALIZING OUTBOUND BEACON LOGISTICS...",
+        "&gt; DETECTING DOMAIN: high-on-codes.github.io [OK]",
+        "&gt; OPENING TLS PORT CONNECTORS MATRIX via HTTPS...",
+        "&gt; ENCRYPTING EMAIL VALUE LOG STRINGS (AES-256)...",
+        "&gt; DISPATCHING ASYNCHRONOUS PACKET SUBMISSION TO FORMSPREE...",
+        "&gt; [SUCCESS] RESPONSE CODE 200 INGESTED BY APEX RELAY ENGINE."
+      ];
+      
+      let currentLine = 0;
+      function printNextLine() {
+        if (currentLine < logs.length) {
+          terminal.innerHTML += `<div>${logs[currentLine]}</div>`;
+          terminal.scrollTop = terminal.scrollHeight;
+          currentLine++;
+          setTimeout(printNextLine, 450);
+        } else {
+          setTimeout(onComplete, 500);
+        }
+      }
+      printNextLine();
+    }
+
     /* --- STATIC SITE FORM SUBMISSION ENGINE --- */
     async function handleBetaSubmit(event) {
       event.preventDefault();
       const emailInput = document.getElementById('beta-email');
       const statusText = document.getElementById('form-status');
       const ticker = document.getElementById('terminal-ticker');
+      const emailValue = emailInput.value;
       
-      statusText.style.display = 'block';
-      statusText.style.color = 'var(--text-muted)';
-      statusText.innerText = '// BROADCASTING BEACON TO EMAIL RELAY...';
       ticker.innerText = "SYS STATUS // EXECUTING INTAKE TRANSMISSION";
 
-      try {
-        const response = await fetch('https://formspree.io/f/mwvdndew', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ email: emailInput.value })
-        });
+      // Runs the immersive terminal streaming lines first
+      streamTerminalLogs(async () => {
+        const terminal = document.getElementById('terminal-stream-box');
+        const formWrapper = document.getElementById('intake-form-wrapper');
+        
+        // Return views back to standard layout and showcase backend server responses
+        formWrapper.style.display = 'block';
+        terminal.style.display = 'none';
+        statusText.style.display = 'block';
+        statusText.style.color = 'var(--text-muted)';
+        statusText.innerText = '// PROCESSING REQUISITION CREDENTIALS...';
 
-        if (response.ok) {
-          statusText.style.color = '#10B981';
-          statusText.innerText = '// ACCESS GRANTED. CREDENTIAL PACKET SECURELY ROUTED TO INBOX.';
-          ticker.innerText = "SYS STATUS // TRANSMISSION COMPLETE // SUCCESS";
-          emailInput.value = '';
-        } else {
-          throw new Error();
+        try {
+          const response = await fetch('https://formspree.io/f/mwvdndew', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ email: emailValue })
+          });
+
+          if (response.ok) {
+            statusText.style.color = '#10B981';
+            statusText.innerText = '// ACCESS GRANTED. CREDENTIAL PACKET SECURELY ROUTED TO INBOX.';
+            ticker.innerText = "SYS STATUS // TRANSMISSION COMPLETE // SUCCESS";
+            emailInput.value = '';
+          } else {
+            throw new Error();
+          }
+        } catch (error) {
+          statusText.style.color = '#EF4444';
+          statusText.innerText = '// ERROR: RELAY PIPELINE PACKET FAULT. RETRY BEACON FORM.';
+          ticker.innerText = "SYS STATUS // PACKET LOSS DETECTED // HALT";
         }
-      } catch (error) {
-        statusText.style.color = '#EF4444';
-        statusText.innerText = '// ERROR: RELAY PIPELINE PACKET FAULT. RETRY BEACON FORM.';
-        ticker.innerText = "SYS STATUS // PACKET LOSS DETECTED // HALT";
-      }
+      });
     }
   </script>
 </body>

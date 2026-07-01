@@ -776,7 +776,7 @@
   <div class="nebula"></div>
 
   <!-- MID-BOTTOM STATUS DOCK NOTIFICATION -->
-  <div id="toast-notification" class="toast-msg mono"> YOUR SPACECRAFT IS GETTING READY IN A FEW MONTHS</div>
+  <div id="toast-notification" class="toast-msg mono">// YOUR SPACECRAFT IS GETTING READY IN A FEW MONTHS</div>
 
   <div class="container">
     
@@ -890,7 +890,7 @@
 
             <div class="legal-section">
               <h4>2. Zero Data Collection & Apple Intelligence Constraints</h4>
-              <p>Because Project Z functions completely independent of centralized cloud instances, we maintain an architectural framework that leaves data entirely in your custody. This application relies exclusively on hardware configured with **Apple Intelligence** to run advanced parsing logic locally. No raw payload configurations or calculated metrics are broadcast over network sockets; everything is computed securely on your own device silicon.</p>
+              <p>Because Project Z functions completely independent of centralized cloud instances, we maintain an architectural framework that leaves data entirely in your custody. This application relies exclusively on hardware configured with Apple Intelligence to run advanced parsing logic locally. No raw payload configurations or calculated metrics are broadcast over network sockets; everything is computed securely on your own device silicon.</p>
             </div>
 
             <div class="legal-section">
@@ -1083,13 +1083,10 @@
     function triggerToast() {
       const toast = document.getElementById('toast-notification');
       
-      // Reset if clicked rapidly
       toast.classList.remove('show');
       clearTimeout(toastTimeout);
       
-      // Force trigger DOM reflow to allow immediate re-animation
-      void toast.offsetWidth;
-      
+      void toast.offsetWidth; // Force re-animation
       toast.classList.add('show');
       
       toastTimeout = setTimeout(() => {
@@ -1151,11 +1148,10 @@
       }
     }
 
-    /* --- STATIC SITE FORM SUBMISSION ENGINE --- */
+    /* --- FORMSPREE ASYNCHRONOUS BACKGROUND API ENGINE --- */
     async function handleBetaSubmit(event) {
       event.preventDefault();
-      const emailInput = document.getElementById('beta-email');
-      const statusText = document.getElementById('form-status');
+      const emailInput = document.getElementById('beta-email');      const statusText = document.getElementById('form-status');
       const ticker = document.getElementById('terminal-ticker');
       
       statusText.style.display = 'block';
@@ -1164,8 +1160,8 @@
       ticker.innerText = "SYS STATUS // EXECUTING INTAKE TRANSMISSION";
 
       try {
-        // PASTE YOUR CUSTOM FORMSPREE ENDPOINT URL INSIDE THE SINGLE QUOTES BELOW
-        const response = await fetch('https://formspree.io/f/mwvdndew'), {
+        // Formspree API call configured perfectly without background thread freezing
+        const response = await fetch('https://formspree.io/f/mwvdndew', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',

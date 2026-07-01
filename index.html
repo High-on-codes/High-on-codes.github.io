@@ -333,75 +333,99 @@
   .feature-card h3{font-size:17px;margin-bottom:11px;font-family:'JetBrains Mono',monospace;}
   .feature-card p{color:var(--silver);font-size:13.8px;line-height:1.7;}
 
-  /* ---------- Try It Input Block Layout Realignment ---------- */
+  /* ---------- RE-ENGINEERED HORIZONTAL PROMPT ROW INTERFACE (Screenshot 2026-07-01 at 9.08.05 PM.png Fix) ---------- */
   .teaser-wrap{
     background:var(--panel); border:1px solid var(--border); border-radius:22px;
     padding:44px; box-shadow:0 30px 90px -40px rgba(0,255,255,0.15); text-align: left;
   }
   @media (max-width:640px){.teaser-wrap{padding:26px 20px;}}
-  .teaser-bar{display:flex; align-items:center; gap:8px; margin-bottom:26px; border-bottom:1px dashed var(--border); padding-bottom:12px;}
-  .teaser-bar span{width:9px; height:9px; border-radius:50%; background:#232a3c;}
-  .teaser-bar .t{font-size:11px; color:var(--faint); margin-left:8px; letter-spacing:.05em;}
+  .teaser-bar{border-bottom:1px dashed var(--border); padding-bottom:12px; margin-bottom: 24px;}
+  .teaser-bar .dots-line { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .teaser-bar span { width:9px; height:9px; border-radius:50%; background:#232a3c; }
+  .teaser-bar .t{font-family: 'JetBrains Mono', monospace; font-size:11px; color:var(--faint); letter-spacing:.05em;}
   
-  /* Fixed Row Layout Framework (Screenshot 2026-07-01 at 9.08.05 PM.png Fix) */
+  /* Flawless Inline Row Alignment Frame */
   .teaser-input-row {
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between;
-    gap: 16px; 
+    display: flex;
+    align-items: center;
+    gap: 16px;
     width: 100%;
-    border-bottom: 1px solid var(--border); 
+    border-bottom: 1px solid var(--border);
     padding-bottom: 12px;
     margin-bottom: 16px;
   }
-  .teaser-input-row .prompt{ font-family:'JetBrains Mono',monospace; color:var(--cyan); font-size:16px; font-weight:700; }
-  .teaser-field-wrapper { flex: 1; text-align: left; }
-  #topicInput{
-    background:transparent; border:none; outline:none;
-    font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--white);
-    width:100%; padding:0; margin:0;
+  .teaser-input-row .prompt {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--cyan);
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
   }
-  #topicInput::placeholder{color:var(--faint);}
+  .teaser-field-wrapper {
+    flex: 1;
+    text-align: left;
+  }
+  #topicInput {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    color: var(--white);
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  #topicInput::placeholder { color: var(--faint); }
   
-  #generateBtn{
-    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px;
-    background:var(--cyan); color:var(--bg); border:none; border-radius:8px;
-    padding:12px 24px; cursor:pointer; letter-spacing:.03em;
-    box-shadow:0 0 24px -8px var(--cyan-glow);
-    transition:transform .25s cubic-bezier(.2,.9,.3,1.3); white-space: nowrap;
+  #generateBtn {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 12.5px;
+    background: var(--cyan);
+    color: var(--bg);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    cursor: pointer;
+    letter-spacing: .03em;
+    box-shadow: 0 0 24px -8px var(--cyan-glow);
+    transition: transform .25s cubic-bezier(.2, .9, .3, 1.3);
+    white-space: nowrap;
+    flex-shrink: 0;
   }
-  #generateBtn:hover{transform:translateY(-2px) scale(1.03);}
+  #generateBtn:hover { transform: translateY(-2px) scale(1.03); }
   
-  .quick-topics{display:flex; gap:9px; flex-wrap:wrap; margin-top:20px; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 24px;}
-  .quick-topic{
-    font-size:11px; color:var(--silver); border:1px solid var(--border); border-radius:20px; padding:6px 13px; cursor:pointer;
-    background:transparent; transition:border-color .2s ease, color .2s ease;
+  .quick-topics { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 20px; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 24px; }
+  .quick-topic {
+    font-size: 11px; color: var(--silver); border: 1px solid var(--border); border-radius: 20px; padding: 6px 13px; cursor: pointer;
+    background: transparent; transition: border-color .2s ease, color .2s ease;
   }
-  .quick-topic:hover{border-color:var(--border-hi); color:var(--cyan);}
+  .quick-topic:hover { border-color: var(--border-hi); color: var(--cyan); }
 
-  .node-track{margin-top:24px; display:flex; flex-direction:column; gap:0; min-height:60px;}
-  .node{
-    display:flex; gap:18px; align-items:flex-start;
-    opacity:0; transform:translateY(14px);
-    animation:nodeIn .6s cubic-bezier(.2,.8,.25,1) forwards;
-    padding:16px 0; text-align: left;
+  .node-track { margin-top: 24px; display: flex; flex-direction: column; gap: 0; min-height: 60px; }
+  .node {
+    display: flex; gap: 18px; align-items: flex-start;
+    opacity: 0; transform: translateY(14px);
+    animation: nodeIn .6s cubic-bezier(.2,.8,.25,1) forwards;
+    padding: 16px 0; text-align: left;
   }
-  @keyframes nodeIn{to{opacity:1; transform:translateY(0);}}
-  .node-line{display:flex; flex-direction:column; align-items:center; width:26px; flex-shrink:0;}
-  .node-dot{
-    width:26px; height:26px; border-radius:50%; border:1px solid var(--border-hi);
-    background:var(--bg-2); display:flex; align-items:center; justify-content:center;
-    font-size:10.5px; color:var(--cyan); box-shadow:0 0 14px -3px var(--cyan-glow); flex-shrink:0;
+  @keyframes nodeIn { to { opacity: 1; transform: translateY(0); } }
+  .node-line { display: flex; flex-direction: column; align-items: center; width: 26px; flex-shrink: 0; }
+  .node-dot {
+    width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border-hi);
+    background: var(--bg-2); display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; color: var(--cyan); box-shadow: 0 0 14px -3px var(--cyan-glow); flex-shrink: 0;
   }
-  .node-stem{width:1px; flex:1; background:linear-gradient(var(--border-hi), var(--border)); margin-top:6px; min-height:20px;}
-  .node:last-child .node-stem{display:none;}
-  .node-body h4{font-family:'Inter',sans-serif; font-size:15px; font-weight:600; color:var(--white); margin-bottom:5px;}
-  .node-body p{font-size:11.5px; color:var(--faint); letter-spacing:.02em;}
-  .node-tag{
-    display:inline-block; font-size:9.5px; color:var(--purple); border:1px solid rgba(138,111,255,0.35); border-radius:5px; padding:2px 7px; margin-top:8px; letter-spacing:.06em;
+  .node-stem { width: 1px; flex: 1; background: linear-gradient(var(--border-hi), var(--border)); margin-top: 6px; min-height: 20px; }
+  .node:last-child .node-stem { display: none; }
+  .node-body h4 { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 5px; }
+  .node-body p { font-size: 11.5px; color: var(--faint); letter-spacing: .02em; }
+  .node-tag {
+    display: inline-block; font-size: 9.5px; color: var(--purple); border: 1px solid rgba(138,111,255,0.35); border-radius: 5px; padding: 2px 7px; margin-top: 8px; letter-spacing: .06em;
   }
-  .hint-line{font-size:11.5px; color:var(--faint); margin-top:30px;}
-  .hint-line .cur{display:inline-block;width:7px;height:13px;background:var(--cyan);vertical-align:middle;margin-left:2px;animation:blink 1s step-end infinite;}
+  .hint-line { font-size: 11.5px; color: var(--faint); margin-top: 30px; }
+  .hint-line .cur { display: inline-block; width: 7px; height: 13px; background: var(--cyan); vertical-align: middle; margin-left: 2px; animation: blink 1s step-end infinite; }
 
   /* ---------- Architectural Blueprints Integration ---------- */
   .blueprint-section {
@@ -738,7 +762,7 @@
       </div>
     </section>
 
-    <!-- INTERACTIVE TEASER (Fixed Horizontal Alignment Row) -->
+    <!-- INTERACTIVE TEASER -->
     <section id="teaser">
       <div class="section-head reveal">
         <span class="eyebrow mono">Live Preview</span>
@@ -748,7 +772,9 @@
 
       <div class="teaser-wrap reveal">
         <div class="teaser-bar">
-          <span></span><span></span><span></span>
+          <div class="dots-line">
+            <span></span><span></span><span></span>
+          </div>
           <div class="t mono">roadmap_engine.local — awaiting input</div>
         </div>
 

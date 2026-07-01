@@ -1,1626 +1,1292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Z | Local-First Telemetry Roadmaps</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Z — Map Your Objectives in Deep Space</title>
+<meta name="description" content="Project Z is a local-first, intelligence-powered iOS roadmap generator. Break any goal into 15–30 milestone steps entirely on-device.">
+
+<!-- CUSTOM TAB ICON LINK -->
+<link rel="icon" type="image/png" href="favicon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#050811;
+    --bg-2:#080c18;
+    --panel:#0a0f1e;
+    --cyan:#00ffff;
+    --cyan-dim:rgba(0,255,255,0.35);
+    --cyan-glow:rgba(0,255,255,0.18);
+    --purple:#8a6fff;
+    --purple-dim:rgba(138,111,255,0.25);
+    --white:#f4f6fb;
+    --silver:#9aa3b8;
+    --faint:#4d566e;
+    --border:rgba(255,255,255,0.09);
+    --border-hi:rgba(0,255,255,0.3);
+    --glass:rgba(255,255,255,0.035);
+    --glass-hi:rgba(255,255,255,0.065);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--white);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important;}
+  }
+  a{color:inherit; text-decoration:none;}
+  ::selection{background:var(--cyan-dim);color:var(--white);}
+
+  .mono{font-family:'JetBrains Mono',monospace;}
+  h1,h2,h3,h4{font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:-0.01em;color:var(--white);}
+
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:0.24em;
+    text-transform:uppercase;
+    color:var(--cyan);
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:6px;height:6px;
+    background:var(--cyan);
+    box-shadow:0 0 10px 2px var(--cyan-glow);
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+  /* ---------- Starfield Background Core ---------- */
+  #stars{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+  }
+  .void-gradient{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 900px 550px at 15% -5%, rgba(138,111,255,0.14), transparent 60%),
+      radial-gradient(ellipse 1000px 650px at 88% 8%, rgba(0,255,255,0.08), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 50% 100%, rgba(0,255,255,0.05), transparent 60%),
+      var(--bg);
+  }
+  main, nav, footer{position:relative;z-index:1;}
+
+  /* ---------- Fluid Section Boundaries To Avoid Edge Cutting ---------- */
+  section {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 6vw;
+  }
   
-  <!-- CUSTOM TAB ICON LINK -->
-  <link rel="icon" type="image/png" href="favicon.png">
+  .section-head {
+    max-width: 660px;
+    margin-bottom: 50px;
+    text-align: left;
+  }
+  .section-head h2 { font-size: clamp(1.7rem,3.2vw,2.4rem); margin-top: 15px; line-height: 1.2; }
+  .section-head p { color: var(--silver); margin-top: 14px; font-size: 15.5px; line-height: 1.75; }
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* ---------- Navigation Header ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 6vw;
+    background:rgba(5,8,17,0.6);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+    border-bottom:1px solid var(--border);
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;}
+  .logo-mark{
+    width:28px;height:28px;border:1px solid var(--cyan);border-radius:7px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;color:var(--cyan);
+    box-shadow:0 0 16px -3px var(--cyan-glow), inset 0 0 8px -3px var(--cyan-glow);
+  }
+  .logo small{font-weight:400;color:var(--faint);font-size:10px;letter-spacing:0.12em;margin-left:2px;}
+  .nav-links{display:flex;gap:32px;font-size:13px;color:var(--silver);font-family:'JetBrains Mono',monospace;}
+  .nav-links a{transition:color .2s ease;position:relative;}
+  .nav-links a:hover{color:var(--cyan);}
+  .nav-cta{
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+    color:var(--bg);background:var(--cyan);
+    padding:10px 18px;border-radius:7px;letter-spacing:0.02em;
+    box-shadow:0 0 24px -6px var(--cyan-glow);
+    transition:transform .25s cubic-bezier(.2,.9,.3,1.3), box-shadow .25s ease;
+    cursor:pointer; border:none; outline:none;
+  }
+  .nav-cta:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 0 34px -4px var(--cyan-glow);}
+  @media (max-width:900px){.nav-links{display:none;}}
+
+  /* ---------- Action Buttons ---------- */
+  .btn-primary{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--cyan);color:var(--bg);
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13.5px;
+    padding:15px 26px;border-radius:11px;
+    box-shadow:0 0 34px -8px var(--cyan-glow);
+    transition:transform .3s cubic-bezier(.2,.9,.3,1.3), box-shadow .3s ease;
+    letter-spacing:0.01em;
+    cursor:pointer; border:none; outline:none;
+  }
+  .btn-primary:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 0 44px -6px var(--cyan-glow);}
+  .btn-ghost{
+    display:inline-flex;align-items:center;gap:10px;color:var(--white);
+    font-family:'JetBrains Mono',monospace;font-weight:500;font-size:13.5px;
+    padding:15px 24px;border-radius:11px;border:1px solid var(--border);
+    background:var(--glass);backdrop-filter:blur(10px);
+    transition:border-color .25s ease, background .25s ease, transform .25s ease;
+  }
+  .btn-ghost:hover{border-color:var(--border-hi);background:var(--glass-hi);transform:translateY(-2px);}
+
+  /* ---------- Hero Section ---------- */
+  .hero{
+    min-height:100vh;
+    display:grid;grid-template-columns:1.05fr 0.95fr;
+    align-items:center;gap:40px;
+    padding-top:150px;
+  }
+  @media (max-width:980px){
+    .hero{grid-template-columns:1fr;padding-top:130px;text-align:center;}
+    .hero-visual{order:-1;margin-bottom:20px;}
+    .hero-actions{justify-content:center;}
+    .hero-meta{justify-content:center !important;}
+  }
+  .hero h1{
+    font-size:clamp(2rem,4.6vw,3.5rem);
+    line-height:1.14;margin:22px 0 20px;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(100deg, var(--cyan), var(--purple) 85%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.sub{color:var(--silver);font-size:16.5px;line-height:1.75;max-width:490px;}
+  @media (max-width:980px){.hero p.sub{max-width:none;margin:0 auto;}}
+  .hero-actions{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;}
+  .hero-meta{display:flex;gap:30px;margin-top:54px;}
+  .meta-item .num{font-size:20px;color:var(--cyan);font-weight:700;}
+  .meta-item .label{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--faint);margin-top:5px;}
+
+  /* ---------- App Live Simulator Core Framework ---------- */
+  .hero-visual{display:flex;justify-content:center;position:relative;perspective:1400px;}
+  .app-preview-container {
+    width: 320px; height: 590px; border-radius: 40px;
+    border: 1px solid var(--border);
+    background: linear-gradient(160deg,#0c1120 0%, #06080f 100%);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.02), 0 40px 100px -30px rgba(0,255,255,0.16), 0 24px 60px -20px rgba(0,0,0,0.75);
+    padding: 13px; position: relative;
+    transform-style: preserve-3d;
+    transition: transform .12s ease-out;
+    will-change: transform;
+  }
+  .app-preview-container::before{
+    content:'';position:absolute;top:13px;left:50%;transform:translateX(-50%);
+    width:86px;height:21px;background:#000;border-radius:14px;z-index:10;
+  }
+  .screen {
+    width: 100%; height: 100%; border-radius: 30px; overflow: hidden; position: relative;
+    background: radial-gradient(ellipse at 30% 0%, rgba(138,111,255,0.13), transparent 55%), #05070f;
+    padding: 32px 15px 15px; display: flex; flex-direction: column; gap: 11px;
+  }
+  .app-nav-header {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 8px; color: var(--faint);
+    border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 4px;
+  }
+  .app-mode-switch-dock {
+    display: flex; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+    border-radius: 6px; padding: 2px; margin: 4px auto 8px; width: fit-content;
+  }
+  .app-mode-btn {
+    background: transparent; border: none; color: var(--faint);
+    font-size: 8.5px; font-weight: 700;
+    padding: 5px 10px; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+  }
+  .app-mode-btn.active-mode { background: #fff; color: #000; }
+
+  /* App Workspace Panels */
+  .app-pane { display: none; height: 100%; flex-direction: column; }
+  .app-pane.active-pane { display: flex; }
   
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  .dashboard-heading { text-align: center; margin: 10px 0; }
+  .dashboard-heading .status-tag { font-size: 7.5px; color: var(--cyan); letter-spacing: 0.15em; display: block; margin-bottom: 4px; }
+  .dashboard-heading h3 { font-size: 16px; font-weight: 400; letter-spacing: 0.05em; }
   
-  <style>
-    :root {
-      --bg-color: #050811;
-      --cyan: #00F2FE;
-      --cyan-glow: rgba(0, 242, 254, 0.4);
-      --purple-dark: #1F0B40;
-      --purple-light: #8E2DE2;
-      --text-main: #F8FAFC;
-      --text-muted: #64748B;
-      --border-color: rgba(0, 242, 254, 0.15);
-      --glass-bg: rgba(7, 12, 28, 0.6);
-      --card-gradient: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      font-family: 'Inter', sans-serif;
-      overflow-x: hidden;
-      line-height: 1.6;
-      position: relative;
-    }
-
-    #space-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -2;
-      pointer-events: none;
-    }
-
-    .nebula {
-      position: fixed;
-      width: 800px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(142, 45, 226, 0.1) 0%, rgba(0, 242, 254, 0.02) 50%, transparent 70%);
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: -1;
-      filter: blur(80px);
-      pointer-events: none;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-
-    .mono {
-      font-family: 'Space Mono', monospace;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-    }
-
-    /* --- NAVIGATION --- */
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 2.5rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-      position: sticky;
-      top: 0;
-      background: rgba(5, 8, 17, 0.8);
-      backdrop-filter: blur(12px);
-      z-index: 1000;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-weight: 900;
-      font-size: 1.1rem;
-      letter-spacing: 0.08em;
-      color: #fff;
-    }
-
-    .logo-box {
-      background: linear-gradient(135deg, var(--cyan), var(--purple-light));
-      color: #000;
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-      font-weight: 900;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 3rem;
-    }
-
-    .nav-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.75rem;
-      transition: color 0.3s, text-shadow 0.3s;
-    }
-
-    .nav-links a:hover {
-      color: var(--cyan);
-      text-shadow: 0 0 8px var(--cyan-glow);
-    }
-
-    .btn-nav {
-      border: 1px solid var(--cyan);
-      padding: 0.6rem 1.4rem;
-      border-radius: 50px;
-      color: var(--cyan);
-      text-decoration: none;
-      font-size: 0.75rem;
-      font-weight: bold;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
-    }
-
-    .btn-nav:hover {
-      background: var(--cyan);
-      color: #000;
-      box-shadow: 0 0 20px var(--cyan-glow);
-      transform: translateY(-1px);
-    }
-
-    /* --- HERO SECTION --- */
-    .hero {
-      text-align: center;
-      padding: 7rem 0 4rem;
-      position: relative;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1.2rem;
-      border: 1px solid var(--border-color);
-      border-radius: 50px;
-      color: var(--cyan);
-      background: rgba(0, 242, 254, 0.03);
-      margin-bottom: 2.5rem;
-      font-size: 0.75rem;
-      box-shadow: 0 0 15px rgba(0, 242, 254, 0.05);
-    }
-
-    .badge-pulse {
-      width: 6px;
-      height: 6px;
-      background: var(--cyan);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    .hero h1 {
-      font-size: clamp(2.8rem, 6vw, 4.8rem);
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.5rem;
-      line-height: 1.1;
-      background: linear-gradient(180deg, #FFFFFF 30%, #94A3B8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero p {
-      color: #94A3B8;
-      font-size: 1.25rem;
-      max-width: 760px;
-      margin: 0 auto 2.5rem;
-      font-weight: 300;
-    }
-
-    .hero-ctas {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 3.5rem;
-    }
-
-    .cta-buttons {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .requirement-notice {
-      font-size: 0.75rem;
-      color: #EF4444;
-      text-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.1rem 2.4rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      cursor: pointer;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #00F2FE 0%, #0072FF 100%);
-      color: #050811;
-      border: none;
-      box-shadow: 0 10px 30px rgba(0, 242, 254, 0.2);
-    }
-
-    .btn-primary:hover {
-      box-shadow: 0 15px 40px rgba(0, 242, 254, 0.4);
-      transform: translateY(-3px);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.02);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.07);
-      border-color: rgba(255, 255, 255, 0.2);
-      transform: translateY(-3px);
-    }
-
-    /* --- SECTION STRUCTURES --- */
-    section {
-      padding: 6rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-    }
-
-    .section-header {
-      margin-bottom: 3.5rem;
-      text-align: left;
-    }
-
-    .section-header h2 {
-      font-size: 2.2rem;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, #ffffff, #64748B);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .section-header .tagline {
-      color: var(--cyan);
-      font-size: 0.75rem;
-      text-shadow: 0 0 8px var(--cyan-glow);
-    }
-
-    /* --- THE COMMAND CONSOLE MOCKUP --- */
-    .mockup-section {
-      padding: 2rem 0 6rem;
-      display: flex;
-      justify-content: center;
-    }
-
-    .mockup-window {
-      background: var(--glass-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      width: 100%;
-      max-width: 950px;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.7), inset 0 0 40px rgba(0, 242, 254, 0.02);
-      backdrop-filter: blur(30px);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .mockup-window::before {
-      content: " ";
-      display: block;
-      position: absolute;
-      top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 242, 254, 0.03) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-      z-index: 10;
-      background-size: 100% 4px, 6px 100%;
-      pointer-events: none;
-    }
-
-    .mockup-header {
-      padding: 1.2rem 1.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      align-items: center;
-      background: rgba(3, 5, 12, 0.8);
-    }
-
-    .window-dots {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #1E293B;
-    }
-    .mockup-window:hover .dot.red { background: #EF4444; }
-    .mockup-window:hover .dot.yellow { background: #F59E0B; }
-    .mockup-window:hover .dot.green { background: #10B981; }
-
-    .mockup-tabs {
-      display: flex;
-      margin-left: 2.5rem;
-      gap: 0.25rem;
-      flex-wrap: wrap;
-    }
-
-    .mockup-tab {
-      background: transparent;
-      border: 1px solid transparent;
-      color: #475569;
-      padding: 0.35rem 1rem;
-      cursor: pointer;
-      font-size: 0.7rem;
-      font-weight: bold;
-      transition: all 0.2s ease;
-      border-radius: 6px;
-    }
-
-    .mockup-tab:hover {
-      color: #94A3B8;
-    }
-
-    .mockup-tab.active {
-      background: rgba(0, 242, 254, 0.05);
-      color: var(--cyan);
-      border-color: rgba(0, 242, 254, 0.2);
-      text-shadow: 0 0 8px var(--cyan-glow);
-    }
-
-    .mockup-body {
-      padding: 4.5rem 3rem;
-      position: relative;
-    }
-
-    .pane {
-      display: none;
-      animation: consoleSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .pane.active {
-      display: grid;
-    }
-
-    .pane-telemetry {
-      grid-template-columns: 1.11fr 1fr;
-      gap: 4rem;
-      align-items: center;
-      min-height: 440px;
-    }
-
-    /* Core Dynamic Progress Orbit Dial */
-    .dial-wrapper {
-      display: flex;
-      justify-content: center;
-      position: relative;
-    }
-
-    .svg-dial {
-      transform: rotate(-90deg);
-      filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.15));
-    }
-
-    .dial-bg {
-      fill: none;
-      stroke: rgba(255, 255, 255, 0.03);
-      stroke-width: 8;
-    }
-
-    .dial-progress {
-      fill: none;
-      stroke: url(#cyan-grad);
-      stroke-width: 8;
-      stroke-linecap: round;
-      stroke-dasharray: 565.48;
-      stroke-dashoffset: 226.19;
-      transition: stroke-dashoffset 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .dial-inner-text {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-    }
-
-    .dial-inner-text h2 {
-      font-size: 3.2rem;
-      font-weight: 900;
-      color: #fff;
-      line-height: 1;
-      margin-bottom: 0.2rem;
-      background: linear-gradient(to bottom, #fff, #A5B4FC);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .dial-inner-text p {
-      color: var(--cyan);
-      font-size: 0.65rem;
-      text-shadow: 0 0 10px var(--cyan-glow);
-    }
-
-    /* Tasks Checklist */
-    .roadmap-tasks {
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
-    }
-
-    .task {
-      display: flex;
-      align-items: center;
-      padding: 1.1rem 1.4rem;
-      background: rgba(255, 255, 255, 0.01);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-
-    .task:hover {
-      background: rgba(0, 242, 254, 0.02);
-      border-color: rgba(0, 242, 254, 0.3);
-      transform: translateX(6px);
-    }
-
-    .task-cb {
-      width: 18px;
-      height: 18px;
-      border: 2px solid #334155;
-      border-radius: 4px;
-      margin-right: 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #0b0f19;
-    }
-
-    .task-cb::after {
-      content: '';
-      width: 8px;
-      height: 8px;
-      background: var(--cyan);
-      border-radius: 2px;
-      opacity: 0;
-      transform: scale(0.5);
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 0 8px var(--cyan);
-    }
-
-    .task.active-task .task-cb {
-      border-color: var(--cyan);
-    }
-
-    .task.active-task .task-cb::after {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .task span {
-      font-size: 0.8rem;
-      color: #94A3B8;
-    }
-
-    .task.active-task span {
-      color: #fff;
-    }
-
-    /* --- LEGAL CONTENT VIEWPORTS (PRIVACY & TERMS) --- */
-    .pane-privacy, .pane-terms {
-      max-width: 850px;
-      margin: 0 auto;
-      max-height: 440px;
-      overflow-y: auto;
-      padding-right: 1.5rem;
-      padding-bottom: 3.5rem;
-    }
-
-    .pane-privacy::-webkit-scrollbar, .pane-terms::-webkit-scrollbar {
-      width: 6px;
-    }
-    .pane-privacy::-webkit-scrollbar-track, .pane-terms::-webkit-scrollbar-track {
-      background: rgba(255,255,255,0.01);
-    }
-    .pane-privacy::-webkit-scrollbar-thumb, .pane-terms::-webkit-scrollbar-thumb {
-      background: rgba(0, 242, 254, 0.2);
-      border-radius: 10px;
-    }
-
-    .priv-header, .terms-header, .support-header {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      padding-bottom: 1.2rem;
-      margin-bottom: 2rem;
-    }
-
-    .priv-header h3, .terms-header h3, .support-header h3 {
-      font-size: 1.4rem;
-      color: #fff;
-      font-weight: 700;
-    }
-
-    .legal-meta {
-      font-size: 0.75rem;
-      color: var(--cyan);
-      margin-top: 0.25rem;
-      text-shadow: 0 0 8px var(--cyan-glow);
-    }
-
-    .legal-section {
-      margin-bottom: 2rem;
-    }
-
-    .legal-section h4 {
-      color: #fff;
-      font-size: 0.95rem;
-      margin-bottom: 0.6rem;
-      border-left: 2px solid var(--cyan);
-      padding-left: 0.75rem;
-    }
-
-    .legal-section p {
-      color: #94A3B8;
-      font-size: 0.85rem;
-      line-height: 1.7;
-      margin-bottom: 0.8rem;
-    }
-
-    .legal-list {
-      list-style: none;
-      padding-left: 1rem;
-      margin-bottom: 0.8rem;
-    }
-
-    .legal-list li {
-      color: #64748B;
-      font-size: 0.85rem;
-      position: relative;
-      padding-left: 1.2rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .legal-list li::before {
-      content: '▪';
-      position: absolute;
-      left: 0;
-      color: var(--purple-light);
-    }
-
-    /* --- MISSION CONTROL SUPPORT PANE --- */
-    .pane-support {
-      grid-template-columns: 1fr 1fr;
-      gap: 3.5rem;
-      align-items: stretch;
-      min-height: 440px;
-    }
-
-    .support-briefing {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .support-briefing p {
-      color: #94A3B8;
-      font-size: 0.95rem;
-      line-height: 1.7;
-      margin-bottom: 1.5rem;
-    }
-
-    .btn-comms {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 242, 254, 0.05);
-      border: 1px solid var(--cyan);
-      color: #fff;
-      font-weight: bold;
-      padding: 0.8rem 1.5rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
-    }
-
-    .btn-comms:hover {
-      background: var(--cyan);
-      color: #050811;
-      box-shadow: 0 0 25px var(--cyan-glow);
-      transform: translateY(-2px);
-    }
-
-    .support-terminal-grid {
-      background: rgba(3, 5, 12, 0.6);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 12px;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 1.2rem;
-    }
-
-    .tech-readout {
-      border-bottom: 1px dashed rgba(255,255,255,0.08);
-      padding-bottom: 0.8rem;
-    }
-
-    .tech-readout:last-child {
-      border: none;
-    }
-
-    .tech-label {
-      color: var(--text-muted);
-      font-size: 0.65rem;
-      display: block;
-      margin-bottom: 0.2rem;
-    }
-
-    .tech-value {
-      font-size: 0.8rem;
-      color: #fff;
-      font-weight: bold;
-    }
-
-    .tech-value.active-glow {
-      color: #10B981;
-      text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
-    }
-
-    .terminal-ticker {
-      position: absolute;
-      bottom: 1rem;
-      right: 2rem;
-      font-size: 0.6rem;
-      color: rgba(0, 242, 254, 0.3);
-    }
-
-    /* --- FEATURE & CONTENT GRIDS WITH MATRIX GLOW MAPS --- */
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 2.5rem;
-    }
-
-    .card {
-      background: var(--card-gradient);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 16px;
-      padding: 3rem 2.5rem;
-      position: relative;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* -- EXPLICIT FEATURE 4 MOUSE TRACKER PERIMETER -- */
-    .card::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      border-radius: 16px;
-      background: radial-gradient(800px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(0, 242, 254, 0.06), transparent 40%);
-      z-index: 1;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-
-    .card:hover::after {
-      opacity: 1;
-    }
-
-    .card * {
-      position: relative;
-      z-index: 2; /* Forces text content above background cursor glow links */
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--cyan), var(--purple-light));
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      z-index: 3;
-    }
-
-    .card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(0, 242, 254, 0.25);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 242, 254, 0.05);
-    }
-
-    .card:hover::before {
-      opacity: 1;
-    }
-
-    .card-icon {
-      font-size: 0.8rem;
-      color: var(--cyan);
-      margin-bottom: 2rem;
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border: 1px solid rgba(0, 242, 254, 0.2);
-      border-radius: 4px;
-      background: rgba(0, 242, 254, 0.02);
-    }
-
-    .card h3 {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: #fff;
-    }
-
-    .card p {
-      color: #94A3B8;
-      font-size: 0.95rem;
-      line-height: 1.7;
-    }
-
-    /* INTERACTIVE DIAGNOSTIC LOG STRIP */
-    .validator-container {
-      margin-top: 1.5rem;
-      background: rgba(3, 5, 12, 0.5);
-      border: 1px dashed rgba(0, 242, 254, 0.2);
-      padding: 1.5rem;
-      border-radius: 8px;
-    }
-
-    .validator-select {
-      width: 100%;
-      background: #050811;
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 0.6rem;
-      border-radius: 4px;
-      color: #fff;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.8rem;
-      outline: none;
-      margin-top: 0.8rem;
-      cursor: pointer;
-    }
-
-    .validator-screen {
-      margin-top: 1rem;
-      background: #02040a;
-      border-radius: 4px;
-      padding: 1rem;
-      min-height: 55px;
-      font-size: 0.75rem;
-      border-left: 3px solid #334155;
-    }
-
-    /* STREAMING LOG WRAPPER */
-    .stream-terminal {
-      background: #02040a !important;
-      border: 1px solid rgba(0, 242, 254, 0.3) !important;
-      font-family: 'Space Mono', monospace;
-      padding: 1.5rem !important;
-      font-size: 0.7rem;
-      line-height: 1.5;
-      color: #10B981;
-      overflow-y: auto;
-      max-height: 180px;
-      text-align: left;
-      display: none;
-    }
-
-    /* --- FAQ ACCORDION --- */
-    .faq-wrapper {
-      max-width: 850px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .faq-item {
-      background: var(--card-gradient);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 12px;
-      padding: 1.5rem 2rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .faq-item:hover {
-      border-color: rgba(0, 242, 254, 0.15);
-    }
-
-    .faq-trigger {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .faq-trigger h4 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: #fff;
-    }
-
-    .faq-icon {
-      color: var(--cyan);
-      transition: transform 0.3s ease;
-    }
-
-    .faq-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease-out, margin-top 0.3s ease;
-      color: #94A3B8;
-      font-size: 0.95rem;
-      line-height: 1.7;
-    }
-
-    .faq-item.active-faq .faq-icon {
-      transform: rotate(45deg);
-    }
-
-    .faq-item.active-faq .faq-content {
-      max-height: 200px;
-      margin-top: 1rem;
-    }
-
-    /* --- TOAST NOTIFICATION STYLING --- */
-    .toast-msg {
-      position: fixed;
-      bottom: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(7, 12, 28, 0.9);
-      border: 1px solid var(--cyan);
-      box-shadow: 0 10px 30px rgba(0, 242, 254, 0.2), inset 0 0 15px rgba(0, 242, 254, 0.1);
-      padding: 1rem 2rem;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 0.85rem;
-      z-index: 9999;
-      pointer-events: none;
-      transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      backdrop-filter: blur(10px);
-      white-space: nowrap;
-    }
-
-    .toast-msg.show {
-      bottom: 2.5rem;
-    }
-
-    /* --- FOOTER --- */
-    footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.04);
-      padding: 4rem 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    footer p {
-      font-size: 0.75rem;
-      color: #334155;
-    }
-
-    .footer-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.8rem;
-      margin-left: 2rem;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover {
-      color: var(--cyan);
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 242, 254, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0); }
-    }
-
-    @keyframes consoleSlide {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 868px) {
-      .pane-telemetry, .pane-support { grid-template-columns: 1fr; gap: 3rem; }
-      nav { flex-direction: column; gap: 1.5rem; }
-      .nav-links { gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
-      footer { flex-direction: column; gap: 1.5rem; }
-      .footer-links a { margin: 0 1rem; }
-    }
-  </style>
+  .metrics-strip {
+    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .metric-block .lbl { font-size: 7.5px; color: var(--faint); }
+  .metric-block .val { font-size: 13px; font-weight: 700; color: #fff; margin-top: 2px; }
+  .metric-block .val.cyan-txt { color: var(--cyan); }
+  
+  .mock-input-field {
+    width: 100%; background: rgba(255,255,255,0.01); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; font-size: 10.5px; color: var(--faint); text-align: center; margin-bottom: 14px;
+  }
+  .big-action-trigger {
+    display: block; width: 100%; background: #fff; color: #000;
+    font-weight: 800; font-size: 11px; padding: 12px; border: none; border-radius: 8px; cursor: pointer; text-align: center;
+  }
+
+  /* Celestial Architecture Tracking Map */
+  .constellation-map-viewport {
+    position: relative; flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: space-around; padding: 10px 0;
+  }
+  .curved-dotted-path {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.25;
+  }
+  .cosmic-node-anchor {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    position: relative; z-index: 2; cursor: pointer;
+  }
+  .cosmic-node-anchor:nth-child(1) { transform: translateX(-25px); }
+  .cosmic-node-anchor:nth-child(2) { transform: translateX(25px); }
+  .cosmic-node-anchor:nth-child(3) { transform: translateX(-15px); }
+  
+  .cosmic-globe-sphere {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #00ffff 0%, #050f26 70%);
+    box-shadow: 0 0 12px rgba(0,255,255,0.2);
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+  }
+  .cosmic-node-anchor.completed-node .cosmic-globe-sphere {
+    background: radial-gradient(circle at 35% 35%, #10b981 0%, #03140f 80%);
+    box-shadow: 0 0 15px rgba(16,185,129,0.3);
+  }
+  .cosmic-globe-sphere svg { width: 14px; height: 14px; color: #fff; }
+  .cosmic-node-title {
+    font-size: 8px; color: var(--silver); margin-top: 10px; max-width: 110px; line-height: 1.4;
+  }
+
+  /* Pop-up Overlay Component Modals */
+  .inapp-modal-curtain {
+    position: absolute; inset: 0; background: rgba(3,5,12,0.75);
+    backdrop-filter: blur(6px); z-index: 100; display: flex;
+    align-items: center; justify-content: center; padding: 12px;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  }
+  .inapp-modal-curtain.active-modal { opacity: 1; pointer-events: auto; }
+  .inapp-box-panel {
+    background: var(--panel); border: 1px solid var(--border-hi);
+    border-radius: 14px; width: 100%; padding: 16px; position: relative;
+  }
+  .modal-top-meta {
+    font-size: 7px; color: var(--cyan); display: flex; justify-content: space-between; align-items: center;
+  }
+  .modal-close-trigger { font-size: 12px; color: var(--faint); cursor: pointer; background: transparent; border: none; }
+  .inapp-box-panel h4 { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; margin: 6px 0 10px; }
+  .modal-internal-tabs { display: flex; border-bottom: 1px solid var(--border); gap: 12px; margin-bottom: 10px; }
+  .modal-tab-item { font-size: 8px; color: var(--faint); padding-bottom: 4px; }
+  .modal-tab-item.active-item { color: #fff; border-bottom: 1px solid #fff; }
+  .mock-embedded-youtube {
+    width: 100%; background: #111424; border: 1px solid var(--border);
+    border-radius: 6px; padding: 16px 10px; text-align: center; margin-bottom: 12px;
+  }
+  .youtube-icon-svg { width: 26px; height: 26px; color: #ff0000; margin-bottom: 4px; }
+  .media-title-label { font-size: 9.5px; color: var(--white); font-weight: 600; }
+  .media-sub-label { font-size: 7.5px; color: var(--faint); }
+
+  /* ---------- Structural Feature Matrix ---------- */
+  .feature-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  @media (max-width:900px){.feature-grid{grid-template-columns:1fr;}}
+  .feature-card {
+    background:var(--panel); border:1px solid var(--border); border-radius:18px;
+    padding:36px 30px; position:relative; overflow:hidden;
+    transition:transform .35s cubic-bezier(.2,.85,.3,1.3), border-color .35s ease, box-shadow .35s ease;
+  }
+  .feature-card::after{
+    content:''; position:absolute; inset:0; border-radius:18px;
+    background:radial-gradient(320px circle at var(--mx,50%) var(--my,0%), rgba(0,255,255,0.08), transparent 60%);
+    opacity:0;transition:opacity .35s ease;pointer-events:none;
+    z-index:1;
+  }
+  .feature-card:hover{transform:translateY(-8px) scale(1.015);border-color:var(--border-hi);box-shadow:0 24px 60px -24px rgba(0,255,255,0.25);}
+  .feature-card:hover::after{opacity:1;}
+  .feature-card * { position: relative; z-index: 2; }
+  .feature-index{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:0.1em;margin-bottom:22px;display:block;}
+  .icon-glyph{
+    width:44px;height:44px;border-radius:11px;border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;margin-bottom:22px;
+    color:var(--cyan);font-size:19px;background:rgba(0,255,255,0.04);
+  }
+  .feature-card h3{font-size:17px;margin-bottom:11px;font-family:'JetBrains Mono',monospace;}
+  .feature-card p{color:var(--silver);font-size:13.8px;line-height:1.7;}
+
+  /* ---------- Interactive Cascade Teaser Box ---------- */
+  .teaser-wrap{
+    background:var(--panel); border:1px solid var(--border); border-radius:22px;
+    padding:44px; box-shadow:0 30px 90px -40px rgba(0,255,255,0.15); text-align: left;
+  }
+  @media (max-width:640px){.teaser-wrap{padding:26px 20px;}}
+  .teaser-bar{display:flex; align-items:center; gap:8px; margin-bottom:26px; border-bottom:1px dashed var(--border); padding-bottom:12px;}
+  .teaser-bar span{width:9px; height:9px; border-radius:50%; background:#232a3c;}
+  .teaser-bar .t{font-size:11px; color:var(--faint); margin-left:8px; letter-spacing:.05em;}
+  
+  .teaser-input-deck {
+    display: flex; align-items: center; gap:16px; width: 100%;
+    background: rgba(255,255,255,0.01); border-bottom: 1px solid var(--border);
+    padding: 8px 4px 12px; margin-bottom: 16px;
+  }
+  .teaser-input-deck .prompt{ color:var(--cyan); font-size:16px; font-weight:700; }
+  .teaser-field-wrapper { flex: 1; text-align: left; }
+  #topicInput{
+    background:transparent; border:none; outline:none;
+    font-size:15px; color:var(--white); width:100%; padding:0; margin:0;
+  }
+  #topicInput::placeholder{color:var(--faint);}
+  
+  #generateBtn{
+    font-weight:700; font-size:12.5px;
+    background:var(--cyan); color:var(--bg); border:none; border-radius:8px;
+    padding:12px 24px; cursor:pointer; letter-spacing:.03em;
+    box-shadow:0 0 24px -8px var(--cyan-glow);
+    transition:transform .25s cubic-bezier(.2,.9,.3,1.3); white-space: nowrap;
+  }
+  #generateBtn:hover{transform:translateY(-2px) scale(1.03);}
+  
+  .quick-topics{display:flex; gap:9px; flex-wrap:wrap; margin-top:20px; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 24px;}
+  .quick-topic{
+    font-size:11px; color:var(--silver); border:1px solid var(--border); border-radius:20px; padding:6px 13px; cursor:pointer;
+    background:transparent; transition:border-color .2s ease, color .2s ease;
+  }
+  .quick-topic:hover{border-color:var(--border-hi); color:var(--cyan);}
+
+  .node-track{margin-top:24px; display:flex; flex-direction:column; gap:0; min-height:60px;}
+  .node{
+    display:flex; gap:18px; align-items:flex-start;
+    opacity:0; transform:translateY(14px);
+    animation:nodeIn .6s cubic-bezier(.2,.8,.25,1) forwards;
+    padding:16px 0; text-align: left;
+  }
+  @keyframes nodeIn{to{opacity:1; transform:translateY(0);}}
+  .node-line{display:flex; flex-direction:column; align-items:center; width:26px; flex-shrink:0;}
+  .node-dot{
+    width:26px; height:26px; border-radius:50%; border:1px solid var(--border-hi);
+    background:var(--bg-2); display:flex; align-items:center; justify-content:center;
+    font-size:10.5px; color:var(--cyan); box-shadow:0 0 14px -3px var(--cyan-glow); flex-shrink:0;
+  }
+  .node-stem{width:1px; flex:1; background:linear-gradient(var(--border-hi), var(--border)); margin-top:6px; min-height:20px;}
+  .node:last-child .node-stem{display:none;}
+  .node-body h4{font-family:'Inter',sans-serif; font-size:15px; font-weight:600; color:var(--white); margin-bottom:5px;}
+  .node-body p{font-size:11.5px; color:var(--faint); letter-spacing:.02em;}
+  .node-tag{
+    display:inline-block; font-size:9.5px; color:var(--purple); border:1px solid rgba(138,111,255,0.35); border-radius:5px; padding:2px 7px; margin-top:8px; letter-spacing:.06em;
+  }
+  .hint-line{font-size:11.5px; color:var(--faint); margin-top:30px;}
+  .hint-line .cur{display:inline-block;width:7px;height:13px;background:var(--cyan);vertical-align:middle;margin-left:2px;animation:blink 1s step-end infinite;}
+
+  /* ---------- Architectural Blueprints Integration ---------- */
+  .blueprint-section {
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+  }
+  .bp-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:40px;}
+  @media (max-width:900px) { .bp-grid { grid-template-columns: 1fr; } }
+  .bp-cell{
+    background:rgba(5,8,17,0.85); border:1px solid var(--border);
+    padding:32px 28px; backdrop-filter:blur(6px); position:relative; border-radius:12px; text-align: left;
+  }
+  .bp-cell .tag{font-size:10px; color:var(--cyan); letter-spacing:.15em; margin-bottom:16px; display:block;}
+  .bp-cell h3{font-size:16px; margin-bottom:10px;}
+  .bp-cell p{color:var(--silver); font-size:13.3px; line-height:1.7; margin-bottom:20px;}
+  
+  .bp-spec-list { display:flex; flex-direction:column; gap:2px; margin-top:12px; }
+  .bp-spec{display:flex; justify-content:space-between; font-size:11px; padding:8px 0; border-top:1px dashed var(--border); color:var(--faint);}
+  .bp-spec span:last-child{color:var(--silver);}
+  .bp-corner{position:absolute; width:9px; height:9px; border:1px solid var(--cyan-dim);}
+  .bp-corner.tl{top:8px; left:8px; border-right:none;border-bottom:none;}
+  .bp-corner.br{bottom:8px; right:8px; border-left:none;border-top:none;}
+
+  /* ---------- Mission Control Dashboard Center Frame ---------- */
+  .terminal-window {
+    background: #040814; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
+    width: 100%; overflow: hidden;
+    box-shadow: 0 40px 90px -20px rgba(0,0,0,0.9), inset 0 0 40px rgba(0,255,255,0.01);
+  }
+  .terminal-header {
+    background: rgba(255,255,255,0.02); padding: 14px 24px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center;
+  }
+  .terminal-dot-group { display: flex; gap: 6px; }
+  .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .terminal-dot.red { background: #ef4444; }
+  .terminal-dot.yellow { background: #f59e0b; }
+  .terminal-dot.green { background: #10b981; }
+  
+  .terminal-header-tabs { display: flex; gap: 24px; margin-left: 40px; font-size: 11px; color: var(--faint); }
+  .terminal-tab-nav { background: transparent; border: none; color: var(--faint); font-family: inherit; font-size: inherit; cursor: pointer; transition: color 0.2s; }
+  .terminal-tab-nav.active-tab-nav {
+    color: var(--cyan); background: rgba(0,255,255,0.05); border: 1px dashed rgba(0,255,255,0.3); padding: 2px 10px; border-radius: 4px;
+  }
+  .terminal-header-dir { font-size: 11px; color: #2e374d; margin-left: auto; letter-spacing: 0.05em; }
+  
+  .terminal-grid-body { display: grid; grid-template-columns: 1.15fr 0.85fr; padding: 50px 40px; gap: 50px; align-items: stretch; position: relative; text-align: left; }
+  @media (max-width:850px) { .terminal-grid-body { grid-template-columns: 1fr; gap: 40px; padding: 40px 24px; } }
+  
+  .terminal-left-intake h3 { font-size: 24px; font-weight: 800; letter-spacing: 0.12em; color: #fff; margin-bottom: 6px; }
+  .terminal-left-intake .sub-tagline { font-size: 10px; color: var(--cyan); letter-spacing: 0.15em; display: block; margin-bottom: 34px; }
+  .terminal-left-intake p.brief-para { color: var(--silver); font-size: 14px; line-height: 1.7; margin-bottom: 34px; max-width: 440px; }
+  
+  .beta-form-container { display: flex; gap: 14px; max-width: 420px; align-items: center; flex-wrap: wrap; }
+  .beta-input {
+    flex: 1; background: #070b1a; border: 1px solid rgba(255,255,255,0.06);
+    padding: 14px 18px; border-radius: 8px; color: #fff; font-size: 13px;
+    outline: none; transition: border-color 0.3s;
+  }
+  .beta-input:focus { border-color: rgba(0,255,255,0.4); }
+  .beta-btn {
+    font-weight: 700; font-size: 11px; letter-spacing: 0.08em;
+    background: transparent; border: 1px solid var(--cyan); color: #fff;
+    padding: 15px 24px; border-radius: 8px; cursor: pointer; transition: all 0.25s; white-space: nowrap;
+  }
+  .beta-btn:hover { background: var(--cyan); color: var(--bg); box-shadow: 0 0 15px var(--cyan-glow); }
+  
+  .terminal-right-telemetry {
+    background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); border-radius: 12px; padding: 36px;
+    display: flex; flex-direction: column; gap: 24px; justify-content: center;
+  }
+  .telemetry-readout-row .label { font-size: 9px; color: var(--faint); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+  .telemetry-readout-row .value { font-size: 13px; font-weight: 700; color: #fff; }
+  .telemetry-readout-row .value.cyan-glow-txt { color: var(--cyan); text-shadow: 0 0 10px rgba(0,255,255,0.2); }
+  .telemetry-readout-row .value.green-glow-txt { color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.2); }
+  .telemetry-readout-row .value.red-glow-txt { color: #ef4444; }
+  
+  .stream-terminal {
+    font-size: 12px; color: #10b981; line-height: 1.6; text-align: left; grid-column: span 2; display: none;
+    border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 24px; max-height: 160px; overflow-y: auto;
+  }
+  @media (max-width:850px) { .stream-terminal { grid-column: span 1; } }
+  .terminal-footer-ticker { background: rgba(255,255,255,0.01); padding: 10px 40px; border-top: 1px solid rgba(255,255,255,0.03); text-align: right; font-size: 9px; color: #222a3a; letter-spacing: 0.05em; }
+
+  /* ---------- Footer Alignments ---------- */
+  .cta-section{ text-align:center; padding:150px 0; margin: 0 auto; max-width: 800px; }
+  .cta-section h2{ font-size:clamp(2rem,4.4vw,3.2rem); line-height:1.15; margin:20px auto 24px; max-width:680px; text-align: center; }
+  .cta-section p{ color:var(--silver); max-width:460px; margin:0 auto 36px; font-size:15px; text-align: center; }
+  .cta-actions{ display:flex; gap:16px; justify-content:center; align-items: center; flex-wrap:wrap; margin: 0 auto; }
+  .cta-note{ font-size:11px; color:var(--faint); margin-top:24px; letter-spacing:.05em; text-align: center; }
+  
+  .store-badge{
+    display:inline-flex; align-items:center; gap:12px; background:#000; border:1px solid rgba(255,255,255,0.14); border-radius:11px;
+    padding:11px 22px; text-decoration:none; color:var(--white); transition:transform .25s cubic-bezier(.2,.9,.3,1.3), border-color .2s ease;
+    cursor:pointer;
+  }
+  .store-badge:hover{transform:translateY(-2px); border-color:var(--border-hi);}
+  .store-badge .terminal-badge-icon {
+    font-size: 10px; font-weight: 800; color: var(--cyan); background: rgba(0,255,255,0.08); border: 1px dashed var(--cyan); padding: 4px 8px; border-radius: 4px;
+  }
+  .store-badge .txt{line-height:1.15; text-align:left;}
+  .store-badge .txt .small{font-size:9px; color:#aeb4c2; display:block;}
+  .store-badge .txt .big{font-size:16.5px; font-weight:600;}
+
+  footer{ border-top:1px solid var(--border); background: var(--bg); width: 100%; }
+  .footer-top{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:24px; padding:44px 0; border-bottom:1px solid var(--border); }
+  .footer-links{ display:flex; gap:30px; font-size:12.5px; color:var(--silver); }
+  .footer-links a{ transition:color .2s ease; cursor:pointer; }
+  .footer-links a:hover{ color:var(--cyan); }
+  .footer-bottom{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; padding:24px 0; font-size:11px; color:var(--faint); }
+  @media (max-width:600px) { .footer-top, .footer-bottom { flex-direction:column; text-align:center; justify-content: center; } .footer-links { justify-content: center; } }
+
+  /* ---------- Toast Messaging System ---------- */
+  .toast-container {
+    position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+    background: rgba(10, 15, 30, 0.9); border: 1px solid var(--cyan);
+    box-shadow: 0 15px 40px var(--cyan-glow); padding: 14px 28px; border-radius: 8px;
+    z-index: 9999; pointer-events: none; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(8px); font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: #fff; letter-spacing: 0.05em; font-weight: 700; text-align: center;
+  }
+  .toast-container.active-toast { bottom: 40px; }
+
+  /* ---------- Legal Panels Viewport Overlay ---------- */
+  .legal-overlay {
+    position: fixed; inset: 0; z-index: 2000; background: rgba(3, 5, 12, 0.85);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .legal-overlay.active-panel { opacity: 1; pointer-events: auto; }
+  .legal-container {
+    background: var(--panel); border: 1px solid var(--border-hi); border-radius: 16px;
+    width: 100%; max-width: 800px; max-height: 80vh; display: flex; flex-direction: column;
+    box-shadow: 0 50px 100px -20px rgba(0,0,0,0.9); transform: translateY(20px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .legal-overlay.active-panel .legal-container { transform: translateY(0); }
+  .legal-window-header { padding: 1.2rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .legal-close-btn { background: transparent; border: 1px solid var(--border); color: var(--silver); padding: 6px 14px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .legal-close-btn:hover { border-color: #ef4444; color: #ef4444; }
+  .legal-content-body { padding: 2.5rem 2rem; overflow-y: auto; font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.7; color: var(--silver); }
+  .legal-content-body::-webkit-scrollbar { width: 6px; }
+  .legal-content-body::-webkit-scrollbar-thumb { background: rgba(0,255,255,0.2); border-radius: 10px; }
+  .legal-content-body h3 { font-size: 18px; color: #fff; margin-bottom: 0.5rem; }
+  .legal-meta { font-size: 11px; color: var(--cyan); margin-bottom: 2rem; letter-spacing: 0.05em; }
+  .legal-content-body h4 { font-size: 14px; color: #fff; margin-top: 1.8rem; margin-bottom: 0.6rem; border-left: 2px solid var(--cyan); padding-left: 10px; }
+  .legal-content-body p { margin-bottom: 1.2rem; }
+</style>
 </head>
 <body>
 
-  <canvas id="space-canvas"></canvas>
-  <div class="nebula"></div>
+<canvas id="stars"></canvas>
+<div class="void-gradient"></div>
 
-  <!-- MID-BOTTOM STATUS DOCK NOTIFICATION -->
-  <div id="toast-notification" class="toast-msg mono">// YOUR SPACECRAFT IS GETTING READY IN A FEW MONTHS</div>
+<!-- POPUP SYSTEM TOAST BANNER -->
+<div class="toast-container mono" id="system-toast-dock">// YOUR SPACECRAFT WILL BE READY IN 2 TO 3 MONTHS</div>
 
-  <div class="container">
-    
-    <!-- NAVIGATION HEADER -->
-    <nav>
-      <div class="logo mono"><span class="logo-box">Z</span> PROJECT Z</div>
-      <div class="nav-links mono">
-        <a href="#problem">PROBLEM</a>
-        <a href="#features">FEATURES</a>
-        <a href="#how-it-works">HOW IT WORKS</a>
-        <a href="#faq">FAQ</a>
-      </div>
-      <a href="#console-anchor" class="btn-nav mono">JOIN BETA</a>
-    </nav>
-
-    <!-- HERO INTRODUCTION -->
-    <header class="hero">
-      <div class="hero-badge mono">
-        <div class="badge-pulse"></div> Local Mobile Grid Connected // v1.0.0
-      </div>
-      <h1>PROJECT Z: LOCAL-FIRST<br>TELEMETRY ROADMAPS.</h1>
-      <p>An ultra-fast, local-only client that maps, parses, and ingests technical telemetry instantly into actionable roadmaps with absolute zero data tracking or database overhead.</p>
-      
-      <div class="hero-ctas">
-        <div class="cta-buttons">
-          <button onclick="triggerToast()" class="btn btn-primary">Download for iOS & iPadOS (v1.0.0)</button>
-          <a href="#console-anchor" class="btn btn-secondary">Open Mission Control</a>
-        </div>
-        <span class="requirement-notice mono">⚠️ CRITICAL REQUIREMENT: Requires compatible device supporting Apple Intelligence</span>
-      </div>
-    </header>
-
-    <!-- SECTION 1: THE PROBLEM AREA -->
-    <section id="problem">
-      <div class="section-header">
-        <div class="tagline mono">// THE ARCHITECTURAL CORE FAULT</div>
-        <h2>The Centralized Data Crisis</h2>
-      </div>
-      <div class="grid-container">
-        <div class="card">
-          <div class="card-icon mono">01 / LATENCY</div>
-          <h3>Cloud Congestion</h3>
-          <p>Traditional log analyzers depend heavily on distant data facilities. Sending vast stack dumps across multiple hops degrades your device speed, limits offline iteration, and spikes parsing latency structures.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon mono">02 / EXPOSURE</div>
-          <h3>Silent Surveillance Perimeter</h3>
-          <p>Modern analytical frameworks subtly harvest execution metrics, device payloads, and structural configurations. Your private code logic becomes cloud metadata footprints without active consent boundaries.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon mono">03 / BLOCKS</div>
-          <h3>System Overhead Bottlenecks</h3>
-          <p>Heavy tracing systems drain processing resources, resulting in runtime interface freezes during processing loops. App performance shouldn't collapse just to view structured milestone diagnostics.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- MAIN CONSOLE INTERACTION PLATFORM -->
-    <span id="console-anchor"></span>
-    <section class="mockup-section">
-      <div class="mockup-window">
-        
-        <div class="mockup-header">
-          <div class="window-dots">
-            <div class="dot red"></div>
-            <div class="dot yellow"></div>
-            <div class="dot green"></div>
-          </div>
-          
-          <div class="mockup-tabs mono">
-            <button id="btn-tab-telemetry" class="mockup-tab active" onclick="toggleConsoleView('telemetry')">telemetry_core.sh</button>
-            <button id="btn-tab-privacy" class="mockup-tab" onclick="toggleConsoleView('privacy')">privacy_policy.txt</button>
-            <button id="btn-tab-terms" class="mockup-tab" onclick="toggleConsoleView('terms')">terms_of_service.conf</button>
-            <button id="btn-tab-support" class="mockup-tab" onclick="toggleConsoleView('support')">mission_control.log</button>
-          </div>
-          
-          <div id="dir-path" class="mono" style="margin-left: auto; color: #334155; font-size: 0.7rem;">~/root/telemetry</div>
-        </div>
-
-        <div class="mockup-body">
-          
-          <!-- TAB 1: TELEMETRY DRILL-DOWN CONTAINER -->
-          <div id="pane-telemetry" class="pane pane-telemetry active">
-            <div class="dial-wrapper">
-              <svg class="svg-dial" width="200" height="200" viewBox="0 0 200 200">
-                <defs>
-                  <linearGradient id="cyan-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#00F2FE" />
-                    <stop offset="100%" stop-color="#8E2DE2" />
-                  </linearGradient>
-                </defs>
-                <circle class="dial-bg" cx="100" cy="100" r="90"></circle>
-                <circle id="interactive-ring" class="dial-progress" cx="100" cy="100" r="90"></circle>
-              </svg>
-              <div class="dial-inner-text">
-                <h2 id="dial-pct" class="mono">60%</h2>
-                <p id="dial-counter" class="mono">3/5 MILESTONES DONE</p>
-              </div>
-            </div>
-
-            <div class="roadmap-tasks">
-              <div class="task active-task" onclick="clickTask(this, 1)">
-                <div class="task-cb"></div>
-                <span class="mono">Initialize Core Telemetry Router</span>
-              </div>
-              <div class="task active-task" onclick="clickTask(this, 2)">
-                <div class="task-cb"></div>
-                <span class="mono">Telemetry Intake String Hook</span>
-              </div>
-              <div class="task active-task" onclick="clickTask(this, 3)">
-                <div class="task-cb"></div>
-                <span class="mono">Map Volatile Local Memory Space</span>
-              </div>
-              <div class="task" onclick="clickTask(this, 4)">
-                <div class="task-cb"></div>
-                <span class="mono">Render Orbit Physics Rings</span>
-              </div>
-              <div class="task" onclick="clickTask(this, 5)">
-                <div class="task-cb"></div>
-                <span class="mono">Compile Clean Binary Output Layout</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- TAB 2: PRIVACY CHARTER -->
-          <div id="pane-privacy" class="pane pane-privacy">
-            <div class="priv-header">
-              <h3 class="mono">PROJECT Z PRIVACY POLICY</h3>
-              <p class="mono legal-meta">Effective Date: July 1, 2026 // Local Node Governance</p>
-            </div>
-            
-            <div class="legal-section">
-              <h4>1. Principle of Local-First Operation</h4>
-              <p>Project Z operates strictly as a local-first application client framework. All operational workflows, data processing pipelines, log parsing scripts, stack trace maps, and telemetry ingest vectors execute entirely on your physical iOS or iPadOS device hardware environment using local Neural Engine frameworks.</p>
-            </div>
-
-            <div class="legal-section">
-              <h4>2. Zero Data Collection & Apple Intelligence Constraints</h4>
-              <p>Because Project Z functions completely independent of centralized cloud instances, we maintain an architectural framework that leaves data entirely in your custody. This application relies exclusively on hardware configured with Apple Intelligence to run advanced parsing logic locally. No raw payload configurations or calculated metrics are broadcast over network sockets; everything is computed securely on your own device silicon.</p>
-            </div>
-
-            <div class="legal-section">
-              <h4>3. Third-Party Waitlist Data Relay Protocol</h4>
-              <p>When an operator explicitly chooses to opt into our Beta Intake program by submitting their email address on this page, that data package is securely transmitted over TLS-encrypted network channels to our trusted data relay service partner, Formspree (Formspree, Inc.). Formspree processes and temporarily caches these text strings purely as a technical delivery middleman to route the notification straight to our command inbox. This intake data is never shared, never sold, and is completely decoupled from your offline client runtime computing environment.</p>
-            </div>
-
-            <div class="legal-section">
-              <h4>4. Ephemeral Memory Persistence</h4>
-              <p>Your processing structures live in temporary volatile client application memory maps. Data configuration logs can be completely cleared by resetting your system container or running the application flush utility. We do not use persistent network caches or silent secondary storage tracking protocols.</p>
-            </div>
-
-            <div class="legal-section">
-              <h4>5. Third-Party Transfers & Regulatory Standards</h4>
-              <p>Since data is never received by us, we never execute transfers, monetization procedures, or disclosure protocols to third parties. Our architecture aligns inherently with international data boundaries (including GDPR and CCPA mandates) by leaving data entirely inside the user's sovereign hardware containment perimeter.</p>
-            </div>
-          </div>
-
-          <!-- TAB 3: EXTENDED LICENSING AGREEMENT -->
-          <div id="pane-terms" class="pane pane-terms">
-            <div class="terms-header">
-              <h3 class="mono">TERMS AND CONDITIONS OF USE</h3>
-              <p class="mono legal-meta">Last Revision: July 1, 2026 // Custom Proprietary License</p>
-            </div>
-
-            <div class="legal-section">
-              <h4>1. Acceptance of Terminal Terms</h4>
-              <p>By executing the Project Z software package binary or accessing its web application elements, you agree to comply with and be bound by these Terms and Conditions. If you do not agree to these constraints, do not load or execute the binary.</p>
-            </div>
-
-            <div class="legal-section">
-              <h4>2. Local Software License & Hardware Scope</h4>
-              <p>Subject to compliance with these terms, Project Z grants you a limited, non-exclusive, non-transferable, revocable license to run the software client purely on personal mobile computing nodes. You acknowledge that proper operation requires physical hardware capable of executing local Apple Intelligence processing pipelines, and deployment on un-supported silicon voids operational support structures.</p>
-            </div>
-
-            <div class="legal-section">
-              <h4>3. Prohibited Exploitation Frameworks</h4>
-              <p>You explicitly agree not to attempt to reverse-engineer, decompile, or derive the source code components of the closed runtime core, distribute altered variations of the client execution binaries, or deploy Project Z within automated loops where software execution delay bugs could lead to operational system crashes.</p>
-            </div>
-
-            <div class="legal-section">
-              <h4>4. Disclaimer of Warranties</h4>
-              <p>The system is deployed "AS IS" and "AS AVAILABLE" without any express or implied guarantees. Because compilation happens completely out of our control on local nodes, we offer zero warranty regarding continuous compatibility, error-free parsing execution, or the absolute protection of volatile memory matrices against hardware faults.</p>
-            </div>
-
-            <div class="legal-section">
-              <h4>5. Limitation of Legal Liability</h4>
-              <p>In no event shall the Project Z team or contributors be liable for loss of data logs, corrupted database arrays, processing latency drops, or hardware operational failures arising from running our ingestion hooks.</p>
-            </div>
-          </div>
-
-          <!-- TAB 4: MISSION INTAKE & SYSTEM SUPPORT GRID -->
-          <div id="pane-support" class="pane pane-support">
-            <div class="support-briefing" id="intake-form-wrapper">
-              <div class="support-header">
-                <h3 class="mono">// BETA COHORT INTAKE</h3>
-                <p class="mono" style="font-size: 0.7rem; color: var(--cyan); margin-top: 0.2rem;">INITIALIZE OPERATOR PROVISIONING</p>
-              </div>
-              <p>Ready to deploy Project Z on your local mobile rig? Input your operational communication address below. Our automated backend gateway will instantly route an official orbital transmission containing your secure download credentials.</p>
-              
-              <form id="beta-form" onsubmit="handleBetaSubmit(event)" style="display: flex; gap: 0.75rem; max-width: 420px; margin-bottom: 1rem;">
-                <input type="email" id="beta-email" name="email" required placeholder="operator@constellation.io" 
-                       style="flex: 1; background: rgba(3, 5, 12, 0.8); border: 1px solid rgba(0, 242, 254, 0.2); padding: 0.8rem 1.2rem; border-radius: 8px; color: #fff; font-family: 'Space Mono', monospace; font-size: 0.85rem; outline: none; transition: border-color 0.3s;"
-                       onfocus="this.style.borderColor='var(--cyan)'" onblur="this.style.borderColor='rgba(0, 242, 254, 0.2)'">
-                <button type="submit" class="btn-comms mono" style="padding: 0 1.5rem; white-space: nowrap; font-size: 0.8rem; cursor: pointer;">
-                  SUBMIT DATA
-                </button>
-              </form>
-              <p id="form-status" class="mono" style="font-size: 0.75rem; color: var(--cyan); display: none;"></p>
-            </div>
-
-            <!-- LIVE STREAM TERMINAL CONTAINER -->
-            <div id="terminal-stream-box" class="stream-terminal mono"></div>
-            
-            <div class="support-terminal-grid">
-              <div class="tech-readout">
-                <span class="tech-label mono">TARGET DESTINATION</span>
-                <span class="tech-value mono" style="color: var(--cyan);">support.projectz@gmail.com</span>
-              </div>
-              <div class="tech-readout">
-                <span class="tech-label mono">ENCRYPTION STATUS</span>
-                <span class="tech-value mono active-glow">SECURE (LOCAL AES-256)</span>
-              </div>
-              <div class="tech-readout">
-                <span class="tech-label mono">REQUIRED SILICON</span>
-                <span class="tech-value mono" style="color: #EF4444;">APPLE INTELLIGENCE REQ.</span>
-              </div>
-              <div class="tech-readout">
-                <span class="tech-label mono">SYSTEM UPTIME</span>
-                <span class="tech-value mono">100% CONTAINERIZED</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- STATUS LOGGER BAR -->
-          <div id="terminal-ticker" class="terminal-ticker mono">SYS STATUS // STANDBY</div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 2: THE FEATURES GRID -->
-    <section id="features">
-      <div class="section-header">
-        <div class="tagline mono">// CAPABILITY MATRIX OVERVIEW</div>
-        <h2>Sovereign Client Specs</h2>
-      </div>
-      <div class="grid-container">
-        <div class="card">
-          <div class="card-icon mono">PRIVACY</div>
-          <h3 class="mono">Absolute Privacy by Design</h3>
-          <p>Data is strictly in-memory and processed locally on your iOS device. No logins, no cloud tracking, and a clean "Data Not Collected" architecture.</p>
-        </div>
-
-        <div class="card">
-          <div class="card-icon mono">INGESTION</div>
-          <h3 class="mono">Instant Telemetry Ingestion</h3>
-          <p>Highlight the engine's ability to take raw technical text strings and instantly parse them into live interactive milestones.</p>
-        </div>
-
-        <div class="card">
-          <div class="card-icon mono">FEEDBACK</div>
-          <h3 class="mono">Tactile Mechanical Feedback</h3>
-          <p>Describe the ultra-smooth physics-based spring animations that make tracking milestones feel physically satisfying.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 3: HOW IT WORKS EXPLANATION -->
-    <section id="how-it-works">
-      <div class="section-header">
-        <div class="tagline mono">// PIPELINE AUTOMATION MAP</div>
-        <h2>The On-Device Processing Loop</h2>
-      </div>
-      <div class="grid-container">
-        <div class="card">
-          <div class="card-icon mono">STEP 01</div>
-          <h3>String Ingestion Hook</h3>
-          <p>The client hooks into your clipboard or raw system log outputs, mapping incoming technical telemetry dumps securely into localized temporary execution zones.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon mono">STEP 02</div>
-          <h3>Neural Engine Breakdown</h3>
-          <p>Leveraging Apple Intelligence hardware primitives, local processing parsers analyze data stacks, sort dependency maps, and build milestone metrics directly inside your secure enclosure.</p>
-          
-          <!-- INTERACTIVE DIAGNOSTIC ACCENT INTERFACE -->
-          <div class="validator-container">
-            <span class="tech-label mono" style="color: var(--cyan);">// RUN ON-DEVICE HARWARE CHECK</span>
-            <select id="chip-selector" class="validator-select" onchange="runChipDiagnostic()">
-              <option value="">-- SELECT HARDWARE ARCHITECTURE --</option>
-              <option value="fail_a15">Apple A15 Bionic (iPhone 13 / 14)</option>
-              <option value="fail_a16">Apple A16 Bionic (iPhone 15)</option>
-              <option value="pass_a17">Apple A17 Pro (iPhone 15 Pro)</option>
-              <option value="pass_m1">Apple M1 / M2 / M3 Silicon</option>
-              <option value="pass_m4">Apple M4 Ultra Matrix</option>
-            </select>
-            <div id="validator-readout" class="validator-screen mono" style="color: #475569;">[STANDBY] AWAITING CORE BALANCER INPUT...</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-icon mono">STEP 03</div>
-          <h3>Visual Orbit Assembly</h3>
-          <p>The app transforms raw text logs into interactive milestones instantly. Milestones map out with smooth spring-based physics for highly scannable workflow monitoring.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 4: INTERACTIVE FAQ CONTEXT CONTAINER -->
-    <section id="faq">
-      <div class="section-header">
-        <div class="tagline mono">// OPERATIONAL MANUAL RETRIEVAL</div>
-        <h2>Frequently Checked Manifests</h2>
-      </div>
-      
-      <div class="faq-wrapper">
-        <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-trigger">
-            <h4>Is my logging configuration really safe?</h4>
-            <span class="faq-icon mono">+</span>
-          </div>
-          <div class="faq-content">
-            <p>Completely. Project Z never establishes communication connections to central remote clouds for execution logs. All string calculations run strictly inside volatile app memory layers and wipe entirely when closing the interface process.</p>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-trigger">
-            <h4>Why is Apple Intelligence strictly required?</h4>
-            <span class="faq-icon mono">+</span>
-          </div>
-          <div class="faq-content">
-            <p>To maintain zero server dependency, the complex language parsing models operate using on-device structural neural processing. This requires modern system architectures engineered exclusively for offline intelligence workflows.</p>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFaq(this)">
-          <div class="faq-trigger">
-            <h4>How can I export completed tracking roadmaps?</h4>
-            <span class="faq-icon mono">+</span>
-          </div>
-          <div class="faq-content">
-            <p>Roadmaps compress safely into a standardized clean text string configuration or portable data dump array. You can paste these directly into separate documentation logs anywhere you want.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TERMINAL FOOTER LINKS -->
-    <footer>
-      <p class="mono">© 2026 PROJECT Z // ALL OPERATIONS CONTAINERIZED LOCAL HOST ONLY</p>
-      <div class="footer-links mono">
-        <a href="#console-anchor" onclick="toggleConsoleView('privacy')">PRIVACY POLICY</a>
-        <a href="#console-anchor" onclick="toggleConsoleView('terms')">TERMS & CONDITIONS</a>
-        <a href="#console-anchor" onclick="toggleConsoleView('support')">SUPPORT CENTER</a>
-      </div>
-    </footer>
-
+<nav>
+  <div class="logo">
+    <div class="logo-mark">Z</div>
+    PROJECT Z <small class="mono">// LOCAL-FIRST OS</small>
   </div>
+  <div class="nav-links mono">
+    <a href="#features">Features</a>
+    <a href="#teaser">Try It</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#beta-intake">Mission Control</a>
+  </div>
+  <button class="nav-cta mono" onclick="triggerSpacecraftToast()">Get the App</button>
+</nav>
 
-  <!-- CONTROL SYSTEM SCRIPTS -->
-  <script>
-    /* --- FEATURE 4: MATRIX MOUSE-TRACKING GLOW MUTE VECTOR --- */
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-      card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
-      });
-    });
+<div class="container">
+  <main>
 
-    /* --- FEATURE 3: HIGH-FIDELITY WEB AUDIO FREQUENCY SYNTHESIZER --- */
-    let audioCtx = null;
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow mono">SwiftUI Native · iOS 17+</span>
+        <h1>Map your objectives in <span class="grad">deep space</span>. Zero tracking. Total control.</h1>
+        <p class="sub">Project Z turns any goal into a structured 15-to-30 step roadmap, generated entirely on-device by a local AI engine. No cloud database, no telemetry, no account — your plan never leaves your pocket.</p>
+        <div class="hero-actions">
+          <button class="btn-primary mono" onclick="triggerSpacecraftToast()">
+            <div>
+              <span class="sub">Download on the</span>
+              <span>App Store</span>
+            </div>
+          </button>
+          <a href="#architecture" class="btn-ghost mono">Explore the Architecture</a>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-item"><div class="num mono">0</div><div class="label mono">Cloud Databases</div></div>
+          <div class="meta-item"><div class="num mono">0</div><div class="label mono">Trackers</div></div>
+          <div class="meta-item"><div class="num mono">15–30</div><div class="label mono">Steps / Roadmap</div></div>
+          <div class="meta-item"><div class="num mono">100%</div><div class="label mono">On-Device</div></div>
+        </div>
+      </div>
 
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-    }
+      <!-- APP SIMULATOR WIREFRAME -->
+      <div class="hero-visual">
+        <div class="phone-glow"></div>
+        <div class="app-preview-container" id="tiltPhone">
+          <div class="screen">
+            
+            <div class="app-nav-header mono">
+              <span>11:39 PM Tue 30 Jun</span>
+              <span>96%</span>
+            </div>
 
-    function playSoundEffect(type) {
-      try {
-        initAudio();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+            <div class="app-mode-switch-dock">
+              <button class="app-mode-btn active-mode mono" id="btn-mode-dash" onclick="switchAppPane('dash')">AUTOMATED CORE</button>
+              <button class="app-mode-btn mono" id="btn-mode-map" onclick="switchAppPane('map')">MANUAL TRACK</button>
+            </div>
 
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+            <!-- TAB PANE 1: CORE TELEMETRY DASHBOARD -->
+            <div class="app-pane active-pane" id="app-pane-dash">
+              <div class="dashboard-heading">
+                <span class="status-tag mono">• SYSTEM ARCHITECTURE STATUS</span>
+                <h3>NEURAL NETWORK</h3>
+              </div>
 
-        const now = audioCtx.currentTime;
+              <div class="metrics-strip">
+                <div class="metric-block">
+                  <span class="lbl mono">TOTAL CURRICULUM DEPTH</span>
+                  <div class="val">180 MIN</div>
+                </div>
+                <div class="metric-block" style="text-align: right;">
+                  <span class="lbl mono">REMAINING QUANTUM</span>
+                  <div class="val cyan-txt">170 MIN LEFT</div>
+                </div>
+              </div>
 
-        if (type === 'blip') {
-          // Sharp, futuristic tab blip
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(880, now);
-          osc.frequency.exponentialRampToValueAtTime(110, now + 0.1);
-          gainNode.gain.setValueAtTime(0.04, now);
-          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-          osc.start(now);
-          osc.stop(now + 0.1);
-        } else if (type === 'click') {
-          // Tactile structural mechanical latch click
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(120, now);
-          osc.frequency.setValueAtTime(40, now + 0.02);
-          gainNode.gain.setValueAtTime(0.2, now);
-          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-          osc.start(now);
-          osc.stop(now + 0.04);
-        } else if (type === 'chime') {
-          // Hardware validation success chime sequence
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(587.33, now); // D5
-          osc.frequency.setValueAtTime(880, now + 0.08); // A5
-          gainNode.gain.setValueAtTime(0.03, now);
-          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-          osc.start(now);
-          osc.stop(now + 0.25);
-        } else if (type === 'fail') {
-          // Low hardware error block tone
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(130, now);
-          osc.frequency.linearRampToValueAtTime(90, now + 0.3);
-          gainNode.gain.setValueAtTime(0.06, now);
-          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-          osc.start(now);
-          osc.stop(now + 0.3);
-        }
-      } catch (e) {
-        // Fallback catch block to handle browser policy blocks cleanly
-      }
-    }
+              <div class="mono" style="font-size: 7px; color: var(--faint); text-align: left; margin-bottom: 2px;">
+                PROCESSING TELEMETRY // 1/18 PHASES COMPLETED (5%)
+              </div>
+              <div style="width:100%; height:3px; background: rgba(255,255,255,0.05); border-radius:2px; margin-bottom:12px; overflow:hidden;">
+                <div style="width:5%; height:100%; background: var(--cyan);"></div>
+              </div>
 
-    /* --- STARFIELD RENDERING ENGINE --- */
-    const canvas = document.getElementById('space-canvas');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    let mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+              <div class="mock-input-field mono">Specify architectural sector configuration...</div>
+              <button class="big-action-trigger mono" onclick="switchAppPane('map')">START THE BUILT-IN CORE</button>
+            </div>
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initStars();
-    }
+            <!-- TAB PANE 2: PLANETARY NODES CONSTELLATION -->
+            <div class="app-pane" id="app-pane-map">
+              <div class="dashboard-heading" style="margin: 0 0 4px 0;">
+                <h3 style="font-size:12px;">Neural network</h3>
+              </div>
+              
+              <div class="constellation-map-viewport">
+                <svg class="curved-dotted-path" viewBox="0 0 200 400" preserveAspectRatio="none">
+                  <path d="M50,40 Q150,120 50,200 T150,360" fill="none" stroke="rgba(0,255,255,0.3)" stroke-width="1" stroke-dasharray="3,3"/>
+                </svg>
 
-    function initStars() {
-      stars = [];
-      const density = Math.floor((canvas.width * canvas.height) / 8000);
-      for (let i = 0; i < density; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 1.5,
-          speed: Math.random() * 0.05 + 0.02
-        });
-      }
-    }
+                <div class="cosmic-node-anchor completed-node" onclick="triggerInAppModal('Introduction to Neural Networks')">
+                  <div class="cosmic-globe-sphere">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                  </div>
+                  <span class="cosmic-node-title mono">Introduction to Neural Networks</span>
+                </div>
 
-    function animateStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-      
-      mouse.x += (mouse.targetX - mouse.x) * 0.08;
-      mouse.y += (mouse.targetY - mouse.y) * 0.08;
+                <div class="cosmic-node-anchor" onclick="triggerInAppModal('Understanding Neurons and Synapses')">
+                  <div class="cosmic-globe-sphere" style="background: radial-gradient(circle at 35% 35%, #00ffff 0%, #06183a 70%);"></div>
+                  <span class="cosmic-node-title mono">Understanding Neurons and Synapses</span>
+                </div>
 
-      stars.forEach(star => {
-        let offsetX = (mouse.x - canvas.width / 2) * star.speed * 0.3;
-        let offsetY = (mouse.y - canvas.height / 2) * star.speed * 0.3;
+                <div class="cosmic-node-anchor" onclick="triggerInAppModal('Feedforward Neural Networks')">
+                  <div class="cosmic-globe-sphere" style="background: radial-gradient(circle at 35% 35%, #00b3ff 0%, #041026 70%);"></div>
+                  <span class="cosmic-node-title mono">Feedforward Neural Networks</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SIMULATED MODAL INSIDE BOX POPUP -->
+            <div class="inapp-modal-curtain" id="inapp-modal">
+              <div class="inapp-box-panel">
+                <div class="modal-top-meta mono">
+                  <span>MODULE SECTOR ANALYSIS // 02</span>
+                  <button class="modal-close-trigger" onclick="closeInAppModal()">✕</button>
+                </div>
+                <h4 id="modal-node-title">UNDERSTANDING NEURONS AND SYNAPSES</h4>
+                
+                <div class="modal-internal-tabs">
+                  <span class="modal-tab-item active-item mono">MISSION</span>
+                  <span class="modal-tab-item mono">RESEARCH</span>
+                  <span class="modal-tab-item mono">MODIFY</span>
+                </div>
+
+                <div class="mock-embedded-youtube">
+                  <svg class="youtube-icon-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.016 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                  <div class="media-title-label">How a synapse works</div>
+                  <div class="media-sub-label mono">Harvard Online</div>
+                </div>
+
+                <button class="big-action-trigger mono" style="border-radius:6px; font-size:9px; padding:8px;" onclick="closeInAppModal()">COMPLETE OBJECTIVE NODE</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORE FEATURE PILLARS -->
+    <section id="features">
+      <div class="section-head reveal">
+        <span class="eyebrow mono">Core Pillars</span>
+        <h2>Three systems, one command center.</h2>
+        <p>Every part of Project Z is designed around a single premise: your ambitions deserve a serious instrument, not another cluttered checklist app.</p>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card reveal" data-tilt>
+          <span class="feature-index mono">PILLAR / 01</span>
+          <div class="icon-glyph">◈</div>
+          <h3>AI Cosmic Mapping</h3>
+          <p>Feed it any discipline — orbital mechanics or oil painting — and the engine generates a deep, ordered track of 15 to 30 milestones, tailored to the shape of that specific goal.</p>
+        </div>
+        <div class="feature-card reveal" data-tilt style="transition-delay:.08s">
+          <span class="feature-index mono">PILLAR / 02</span>
+          <div class="icon-glyph">◎</div>
+          <h3>Absolute Privacy</h3>
+          <p>Local-first sandbox computing, full stop. Zero cloud databases, zero telemetry tracking, zero accounts. 100% of your data is owned, stored, and processed on your device alone.</p>
+        </div>
+        <div class="feature-card reveal" data-tilt style="transition-delay:.16s">
+          <span class="feature-index mono">PILLAR / 03</span>
+          <div class="icon-glyph">✦</div>
+          <h3>Command Center UI</h3>
+          <p>A gorgeous, high-performance interface engineered for builders who notice detail — glassmorphic panels, telemetry-grade type, and motion tuned to feel premium, not gimmicky.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE PATH BUILDER PREVIEW -->
+    <section id="teaser">
+      <div class="section-head reveal">
+        <span class="eyebrow mono">Live Preview</span>
+        <h2>Type a goal. Watch the roadmap cascade.</h2>
+        <p>This is a simplified web preview of the on-device engine. Try one of your own, or pick a quick example below.</p>
+      </div>
+
+      <div class="teaser-wrap reveal">
+        <div class="teaser-bar">
+          <span></span><span></span><span></span>
+          <div class="t mono">roadmap_engine.local — awaiting input</div>
+        </div>
+
+        <div class="teaser-input-row">
+          <span class="prompt mono">&gt;</span>
+          <div class="teaser-field-wrapper">
+            <input id="topicInput" type="text" placeholder="e.g. Build a Rocket" maxlength="46" autocomplete="off">
+          </div>
+          <button id="generateBtn" class="mono">Generate Roadmap</button>
+        </div>
+
+        <div class="quick-topics">
+          <button class="quick-topic mono" data-topic="Build a Rocket">Build a Rocket</button>
+          <button class="quick-topic mono" data-topic="Launch a Podcast">Launch a Podcast</button>
+          <button class="quick-topic mono" data-topic="Learn Piano">Learn Piano</button>
+          <button class="quick-topic mono" data-topic="Ship a Startup">Ship a Startup</button>
+        </div>
+
+        <div class="node-track" id="nodeTrack"></div>
+        <div class="hint-line mono" id="hintLine">Standing by for input<span class="cur"></span></div>
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE MATRIX SPECS -->
+    <section id="architecture" class="blueprint-section">
+      <div class="section-head reveal">
+        <span class="eyebrow mono">Engineering Schematic</span>
+        <h2>Built native. Runs local. No exceptions.</h2>
+        <p>Project Z is written entirely in SwiftUI with a sandboxed SwiftData layer — no third-party backend, no remote API for your data to pass through.</p>
+      </div>
+
+      <div class="bp-grid reveal">
+        <div class="bp-cell">
+          <span class="bp-corner tl"></span><span class="bp-corner br"></span>
+          <span class="tag mono">LAYER.01 — INTERFACE</span>
+          <h3>SwiftUI Native Execution</h3>
+          <p>Every view is rendered through Apple's native declarative framework — no WebView wrapper, no cross-platform compromise.</p>
+          <div class="bp-spec-list">
+            <div class="bp-spec mono"><span>Render engine</span><span>SwiftUI 5</span></div>
+            <div class="bp-spec mono"><span>Min. target</span><span>iOS 17.0</span></div>
+            <div class="bp-spec mono"><span>Frame budget</span><span>&le; 8.3ms</span></div>
+          </div>
+        </div>
+        <div class="bp-cell">
+          <span class="bp-corner tl"></span><span class="bp-corner br"></span>
+          <span class="tag mono">LAYER.02 — MEMORY</span>
+          <h3>SwiftData Local Cache</h3>
+          <p>Roadmaps are parsed and persisted through a sandboxed on-device model layer, purpose-built for instantaneous read/write with zero lag.</p>
+          <div class="bp-spec-list">
+            <div class="bp-spec mono"><span>Storage class</span><span>Sandboxed</span></div>
+            <div class="bp-spec mono"><span>Network calls</span><span>0</span></div>
+            <div class="bp-spec mono"><span>Sync target</span><span>None</span></div>
+          </div>
+        </div>
+        <div class="bp-cell">
+          <span class="bp-corner tl"></span><span class="bp-corner br"></span>
+          <span class="tag mono">LAYER.03 — ENGINE</span>
+          <h3>On-Device Generation Core</h3>
+          <p>The roadmap engine runs its inference locally, structuring milestones by dependency order rather than difficulty alone.</p>
+          
+          <div class="validator-container">
+            <span class="tech-label mono" style="color: var(--cyan); font-size:10px;">// SYSTEM HARDWARE VALIDATION</span>
+            <select id="chip-selector" class="validator-select" onchange="runChipDiagnostic()">
+              <option value="">-- SELECT SYSTEM CHIP ARCHITECTURE --</option>
+              <option value="fail_legacy">Apple Legacy Chips (A15 / A16 Bionic)</option>
+              <option value="pass_pro">Apple A17 Pro (iPhone 15 Pro Base)</option>
+              <option value="pass_mseries">Apple M1 / M2 / M3 Silicon</option>
+              <option value="pass_max">Apple M4 Ultra Matrix Infrastructure</option>
+            </select>
+            <div id="validator-readout" class="validator-screen mono" style="color: var(--faint);">[STANDBY] AWAITING CORE MODULE TARGET INPUT...</div>
+          </div>
+
+          <div class="bp-spec-list" style="margin-top:1rem;">
+            <div class="bp-spec mono"><span>Compute location</span><span>On-device</span></div>
+            <div class="bp-spec mono"><span>Output range</span><span>15–30 steps</span></div>
+            <div class="bp-spec mono"><span>Avg. generation</span><span>&lt; 400ms</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MISSION CONTROL COHORT PANEL DOCK -->
+    <section id="beta-intake" class="intake-section">
+      <div class="terminal-window">
         
-        ctx.beginPath();
-        ctx.arc(star.x + offsetX, star.y + offsetY, star.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      requestAnimationFrame(animateStars);
+        <div class="terminal-header">
+          <div class="terminal-dot-group">
+            <div class="terminal-dot red"></div>
+            <div class="terminal-dot yellow"></div>
+            <div class="terminal-dot green"></div>
+          </div>
+          <div class="terminal-header-tabs">
+            <span class="terminal-tab-nav mono" onclick="openLegalPanel('privacy')">telemetry_core.sh</span>
+            <span class="terminal-tab-nav mono" onclick="openLegalPanel('privacy')">privacy_policy.txt</span>
+            <span class="terminal-tab-nav mono" onclick="openLegalPanel('terms')">terms_of_service.conf</span>
+            <span class="terminal-tab-nav active-tab-nav mono">mission_control.log</span>
+          </div>
+          <span class="terminal-header-dir mono">~/ROOT/MISSION_CONTROL</span>
+        </div>
+
+        <div class="terminal-grid-body">
+          
+          <div class="terminal-left-intake" id="intake-form-wrapper">
+            <h3>// BETA COHORT INTAKE</h3>
+            <span class="sub-tagline mono">INITIALIZE OPERATOR PROVISIONING</span>
+            <p class="brief-para">Ready to deploy Project Z on your local mobile rig? Input your operational communication address below. Our automated backend gateway will instantly route an official orbital transmission containing your secure download credentials.</p>
+            
+            <form id="beta-form" onsubmit="handleBetaSubmit(event)">
+              <div class="beta-form-container">
+                <input type="email" id="beta-email" name="email" class="beta-input mono" required placeholder="operator@constellation.io">
+                <button type="submit" class="beta-btn mono">SUBMIT DATA</button>
+              </div>
+            </form>
+            <p id="form-status" class="mono" style="font-size: 12px; color: var(--cyan); display: none; margin-top:14px;"></p>
+          </div>
+
+          <div id="terminal-stream-box" class="stream-terminal mono"></div>
+
+          <div class="terminal-right-telemetry">
+            <div class="telemetry-readout-row">
+              <span class="label mono">TARGET DESTINATION</span>
+              <div class="value cyan-glow-txt mono">SUPPORT.PROJECTZ@GMAIL.COM</div>
+            </div>
+            <div class="telemetry-readout-row">
+              <span class="label mono">ENCRYPTION STATUS</span>
+              <div class="value green-glow-txt mono">SECURE (LOCAL AES-256)</div>
+            </div>
+            <div class="telemetry-readout-row">
+              <span class="label mono">REQUIRED SILICON</span>
+              <div class="value red-glow-txt mono">APPLE INTELLIGENCE REQ.</div>
+            </div>
+            <div class="telemetry-readout-row">
+              <span class="label mono">SYSTEM UPTIME</span>
+              <div class="value mono">100% CONTAINERIZED</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="terminal-footer-ticker mono" id="ticker-status-msg">COMMS STACK // INTAKE OVERVIEW LOADED</div>
+      </div>
+    </section>
+
+    <!-- ENTRY DOWNLOAD ACCENTS -->
+    <section class="cta-section reveal" id="download">
+      <span class="eyebrow mono">Ready for launch</span>
+      <h2>Chart your next roadmap tonight.</h2>
+      <p>Get instant architectural optimization, built natively for iOS with advanced computational telemetry mapping.</p>
+      <div class="cta-actions">
+        <div class="store-badge" aria-label="Download on the App Store" onclick="triggerSpacecraftToast()">
+          <div class="terminal-badge-icon mono">ARM64</div>
+          <span class="txt"><span class="small">Download on the</span><span class="big">App Store</span></span>
+        </div>
+        <a href="#features" class="btn-ghost mono">Explore the Modules</a>
+      </div>
+      <div class="cta-note mono">REQUIRES iOS 17.0 OR LATER · OFFERS IN-APP PURCHASES · NO ACCOUNT REQUIRED</div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER CLOSURE METRICS -->
+  <footer>
+    <div class="footer-top">
+      <div class="logo">
+        <div class="logo-mark">Z</div>
+        PROJECT Z
+      </div>
+      <div class="footer-links mono">
+        <a onclick="openLegalPanel('privacy')">Privacy Policy</a>
+        <a onclick="openLegalPanel('terms')">Terms of Service</a>
+        <a href="#beta-intake">Support</a>
+      </div>
+      <div class="store-badge" aria-label="Download on the App Store" onclick="triggerSpacecraftToast()">
+        <div class="terminal-badge-icon mono">v1.0.0</div>
+        <span class="txt"><span class="small">Download on the</span><span class="big">App Store</span></span>
+      </div>
+    </div>
+    <div class="footer-bottom mono">
+      <span>&copy; 2026 Project Z. Built local-first, by design.</span>
+      <span>Made with SwiftUI · Premium In-App Purchase Tier Support Active.</span>
+    </div>
+  </footer>
+</div>
+
+<!-- LEGAL DIALOGUE PORT CONTROLLERS -->
+<div id="panel-privacy" class="legal-overlay" onclick="closeLegalPanel('privacy')">
+  <div class="legal-container" onclick="event.stopPropagation()">
+    <div class="legal-window-header">
+      <span class="eyebrow mono">Sovereign Protection Framework</span>
+      <button class="legal-close-btn mono" onclick="closeLegalPanel('privacy')">CLOSE_SYS</button>
+    </div>
+    <div class="legal-content-body">
+      <h3>PRIVACY CHARTER & CORPORATE POLICY</h3>
+      <p class="legal-meta mono">LAST REVISION: JULY 1, 2026 // NODE GOVERNANCE V4.1</p>
+      <h4>1. PRIVACY STATEMENT & BOUNDARIES</h4>
+      <p>Project Z operates fundamentally as a local-first application workspace environment. Our system data flow logic guarantees that all objective mappings, telemetry logs, parsing variables, roadmap data entries, and generation prompts remain containerized strictly within your native physical sandbox boundary layer.</p>
+      <h4>2. DATA INGEST AND SCOPE EXCLUSION</h4>
+      <p>We do not collect, monetize, analyze, or intercept your operational roadmap content inputs. Inference arrays are computed entirely using on-device silicon processing. No network sockets are initialized during execution generation loops to forward application content arrays to a central database ledger.</p>
+      <h4>3. REGULATORY THIRD-PARTY RELAYS</h4>
+      <p>When an operator proactively submits an email address into our system waitlist communication node, this string package is encrypted and securely routed via TLS tunnel systems directly to our database middleware partner, Formspree (Formspree, Inc.). This intake data is handled strictly in adherence with general GDPR data containment definitions.</p>
+    </div>
+  </div>
+</div>
+
+<div id="panel-terms" class="legal-overlay" onclick="closeLegalPanel('terms')">
+  <div class="legal-container" onclick="event.stopPropagation()">
+    <div class="legal-window-header">
+      <span class="eyebrow mono">End-User Operational License</span>
+      <button class="legal-close-btn mono" onclick="closeLegalPanel('terms')">CLOSE_SYS</button>
+    </div>
+    <div class="legal-content-body">
+      <h3>TERMS AND COMMERCIAL AGREEMENT</h3>
+      <p class="legal-meta mono">EFFECTIVE CONTINUUM: JULY 1, 2026 // PREMIUM SUBSCRIPTION PROTOCOL</p>
+      <h4>1. PROPRIETARY SOFTWARE RIGHT</h4>
+      <p>Project Z grants the individual operator a single, non-exclusive, revocable right to run application binaries across supported mobile device silicon configurations. Commercial exploitation or decompilation of our native structural models is strictly barred.</p>
+      <h4>2. PAYMENT STRUCTURES & IN-APP ACQUISITION</h4>
+      <p>Certain complex tracking modules and milestone analytics maps operate under premium tiered payment rails managed exclusively via Apple Store commerce APIs. All payment validation checks, token generation keys, and cancelation cycles adhere to standard App Store platform subscription mandates.</p>
+      <h4>3. ZERO-WARRANTY FAULT LIMITATIONS</h4>
+      <p>The core infrastructure runs "AS IS". We offer no express or implied legal guarantees regarding complete data log permanence inside volatile client device memory stacks during massive operating system crashes or localized hardware structural faults.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* --- TOAST SYSTEM ALERTS ANIMATOR --- */
+  let toastTimer = null;
+  function triggerSpacecraftToast() {
+    playAudioEffect('chime');
+    const toast = document.getElementById('system-toast-dock');
+    
+    toast.classList.remove('active-toast');
+    clearTimeout(toastTimer);
+    
+    void toast.offsetWidth;
+    toast.classList.add('active-toast');
+    
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('active-toast');
+    }, 4500);
+  }
+
+  /* --- APP PANES WORKSPACE ROUTERS --- */
+  function switchAppPane(mode) {
+    playAudioEffect('blip');
+    const dashPane = document.getElementById('app-pane-dash');
+    const mapPane = document.getElementById('app-pane-map');
+    const btnDash = document.getElementById('btn-mode-dash');
+    const btnMap = document.getElementById('btn-mode-map');
+    
+    if (mode === 'dash') {
+      dashPane.classList.add('active-pane');
+      mapPane.classList.remove('active-pane');
+      btnDash.classList.add('active-mode');
+      btnMap.classList.remove('active-mode');
+    } else {
+      dashPane.classList.remove('active-pane');
+      mapPane.classList.add('active-pane');
+      btnDash.classList.remove('active-mode');
+      btnMap.classList.add('active-mode');
     }
+  }
 
-    window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('mousemove', (e) => {
-      mouse.targetX = e.clientX;
-      mouse.targetY = e.clientY;
-    });
+  /* --- INTERACTIVE INSPECTOR MODAL --- */
+  function triggerInAppModal(nodeTitle) {
+    playAudioEffect('blip');
+    const modal = document.getElementById('inapp-modal');
+    const title = document.getElementById('modal-node-title');
+    title.innerText = nodeTitle.toUpperCase();
+    modal.classList.add('active-modal');
+  }
+  function closeInAppModal() {
+    playAudioEffect('click');
+    document.getElementById('inapp-modal').classList.remove('active-modal');
+  }
 
-    resizeCanvas();
-    animateStars();
+  /* --- LEGAL PANEL MANAGERS --- */
+  function openLegalPanel(view) {
+    playAudioEffect('blip');
+    document.getElementById(`panel-${view}`).classList.add('active-panel');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLegalPanel(view) {
+    playAudioEffect('click');
+    document.getElementById(`panel-${view}`).classList.remove('active-panel');
+    document.body.style.overflow = '';
+  }
 
-    /* --- HARDWARE VALIDATOR METRICS ENGINE --- */
-    function runChipDiagnostic() {
-      const selection = document.getElementById('chip-selector').value;
-      const display = document.getElementById('validator-readout');
-      
-      if (!selection) {
-        display.style.color = '#475569';
-        display.style.borderLeftColor = '#334155';
-        display.innerText = '[STANDBY] AWAITING CORE BALANCER INPUT...';
-        return;
+  /* --- HARDWARE ARCHITECTURE LOGIC VALIDATOR --- */
+  function runChipDiagnostic() {
+    const selection = document.getElementById('chip-selector').value;
+    const display = document.getElementById('validator-readout');
+    if (!selection) {
+      display.style.color = 'var(--faint)'; display.style.borderLeftColor = '#4d566e';
+      display.innerText = '[STANDBY] AWAITING CORE MODULE TARGET INPUT...';
+      return;
+    }
+    display.style.color = 'var(--cyan)'; display.innerText = '[RUNNING] SCANNING SYSTEM ENCLOSURE NEURAL MATRIX CORES...';
+    playAudioEffect('blip');
+
+    setTimeout(() => {
+      if (selection.startsWith('fail')) {
+        display.style.color = '#ef4444'; display.style.borderLeftColor = '#ef4444';
+        display.innerText = '[HALT] NEURAL LAYER REJECTED. HARDWARE LACKS SECURE LOCAL INTELLIGENCE COMPUTE CORES.';
+        playAudioEffect('fail');
+      } else {
+        display.style.color = '#10b981'; display.style.borderLeftColor = '#10b981';
+        display.innerText = '[READY] CORES MATCHED. LOCAL INFERENCE RUNTIME SYSTEM VERIFIED.';
+        playAudioEffect('chime');
       }
-      
-      display.style.color = 'var(--cyan)';
-      display.innerText = '[RUNNING] VERIFYING NEURAL CORES ARCHITECTURE MAPS...';
-      playSoundEffect('blip');
-      
-      setTimeout(() => {
-        if (selection.startsWith('fail')) {
-          display.style.color = '#EF4444';
-          display.style.borderLeftColor = '#EF4444';
-          display.innerText = '[HALT] NEURAL MATRIX INSUFFICIENT. DETECTING LACK OF LOCAL APPLE INTELLIGENCE CORES.';
-          playSoundEffect('fail');
-        } else {
-          display.style.color = '#10B981';
-          display.style.borderLeftColor = '#10B981';
-          display.innerText = '[READY] CORES ENCLOSED SECURELY. COMPATIBLE LOCAL ENGINE PIPELINE CONFIRMED.';
-          playSoundEffect('chime');
-        }
-      }, 600);
-    }
+    }, 650);
+  }
 
-    /* --- FAQ INTERACTIVE ACCORDION TOGGLE --- */
-    function toggleFaq(element) {
-      playSoundEffect('click');
-      const activeItems = document.querySelectorAll('.faq-item.active-faq');
-      activeItems.forEach(item => {
-        if(item !== element) item.classList.remove('active-faq');
-      });
-      element.classList.toggle('active-faq');
-    }
+  /* --- LIVE INTAKE LOG PIPELINE RE-STREAM UTIL --- */
+  function streamTerminalLogs(onComplete) {
+    const terminal = document.getElementById('terminal-stream-box');
+    const formWrapper = document.getElementById('intake-form-wrapper');
+    formWrapper.style.display = 'none'; terminal.style.display = 'block'; terminal.innerHTML = '';
 
-    /* --- TOAST INTERACTIVE TRIGGER --- */
-    let toastTimeout;
-    function triggerToast() {
-      playSoundEffect('chime');
-      const toast = document.getElementById('toast-notification');
-      
-      toast.classList.remove('show');
-      clearTimeout(toastTimeout);
-      
-      void toast.offsetWidth; // Force reflow
-      toast.classList.add('show');
-      
-      toastTimeout = setTimeout(() => {
-        toast.classList.remove('show');
-      }, 4000);
-    }
+    const logs = [
+      "&gt; CONNECTING SECURE UPLINK BEACON BUFFER...",
+      "&gt; PARSING LOGS ROOT REPOSITORY DOMAIN: high-on-codes.github.io [OK]",
+      "&gt; ESTABLISHING FORMSPREE OUTBOUND DISPATCH PROTOCOL...",
+      "&gt; ENCRYPTING LOCAL FRAMEWORK TRANSMISSION STRING (TLS_AES_256)...",
+      "&gt; RECORDING OPERATOR WAITLIST TOKEN PERIMETER...",
+      "&gt; [SUCCESS] RESP_CODE_200 INGEST ENGINE COMPLIANT."
+    ];
 
-    /* --- SPRING RADIAL LOGIC --- */
-    const totalTasks = 5;
-    const maxStrokeOffset = 565.48;
-
-    function clickTask(element, index) {
-      playSoundEffect('click');
-      element.classList.toggle('active-task');
-      
-      const activeTasks = document.querySelectorAll('.task.active-task').length;
-      const percentage = Math.round((activeTasks / totalTasks) * 100);
-      
-      document.getElementById('dial-pct').innerText = percentage + '%';
-      document.getElementById('dial-counter').innerText = `${activeTasks}/${totalTasks} MILESTONES DONE`;
-      
-      const offset = maxStrokeOffset - (maxStrokeOffset * (activeTasks / totalTasks));
-      document.getElementById('interactive-ring').style.strokeDashoffset = offset;
-
-      const log = document.getElementById('terminal-ticker');
-      log.innerText = `NODE INTERACT // TASKS COMPLIANT: ${activeTasks} // ENGINE CODE: 0x${(activeTasks * 14).toString(16).toUpperCase()}`;
-    }
-
-    /* --- VIEW STATE ROUTER --- */
-    function toggleConsoleView(view) {
-      playSoundEffect('blip');
-      const panes = ['pane-telemetry', 'pane-privacy', 'pane-terms', 'pane-support'];
-      const tabs = ['btn-tab-telemetry', 'btn-tab-privacy', 'btn-tab-terms', 'btn-tab-support'];
-      
-      panes.forEach(p => document.getElementById(p).classList.remove('active'));
-      tabs.forEach(t => document.getElementById(t).classList.remove('active'));
-      
-      const dirPath = document.getElementById('dir-path');
-      const log = document.getElementById('terminal-ticker');
-
-      if (view === 'telemetry') {
-        document.getElementById('pane-telemetry').classList.add('active');
-        document.getElementById('btn-tab-telemetry').classList.add('active');
-        dirPath.innerText = '~/root/telemetry';
-        log.innerText = "SYS STATUS // TELEMETRY ENGINE ONLINE";
-      } else if (view === 'privacy') {
-        document.getElementById('pane-privacy').classList.add('active');
-        document.getElementById('btn-tab-privacy').classList.add('active');
-        dirPath.innerText = '~/root/privacy_policy.txt';
-        log.innerText = "LEGAL REPOSITORY // PRIVACY CHARTER BOOTED";
-      } else if (view === 'terms') {
-        document.getElementById('pane-terms').classList.add('active');
-        document.getElementById('btn-tab-terms').classList.add('active');
-        dirPath.innerText = '~/root/terms_of_service.conf';
-        log.innerText = "LEGAL REPOSITORY // PROPRIETARY TERMS LOADED";
-      } else if (view === 'support') {
-        document.getElementById('pane-support').classList.add('active');
-        document.getElementById('btn-tab-support').classList.add('active');
-        dirPath.innerText = '~/root/mission_control';
-        log.innerText = "COMMS STACK // INTAKE OVERVIEW LOADED";
+    let currentLine = 0;
+    function printNextLine() {
+      if (currentLine < logs.length) {
+        playAudioEffect('click');
+        terminal.innerHTML += `<div>${logs[currentLine]}</div>`;
+        terminal.scrollTop = terminal.scrollHeight;
+        currentLine++;
+        setTimeout(printNextLine, 400);
+      } else {
+        setTimeout(onComplete, 400);
       }
     }
+    printNextLine();
+  }
 
-    /* --- DYNAMIC LIVE TERMINAL LOG STREAMER --- */
-    function streamTerminalLogs(onComplete) {
+  /* --- FORM SUBMISSION PIPELINE RE-ROUTE --- */
+  async function handleBetaSubmit(event) {
+    event.preventDefault();
+    const emailInput = document.getElementById('beta-email');
+    const statusText = document.getElementById('form-status');
+    const ticker = document.getElementById('ticker-status-msg');
+    const emailValue = emailInput.value;
+
+    streamTerminalLogs(async () => {
       const terminal = document.getElementById('terminal-stream-box');
       const formWrapper = document.getElementById('intake-form-wrapper');
-      
-      formWrapper.style.display = 'none';
-      terminal.style.display = 'block';
-      terminal.innerHTML = '';
-      
-      const logs = [
-        "&gt; INITIALIZING OUTBOUND BEACON LOGISTICS...",
-        "&gt; DETECTING DOMAIN: high-on-codes.github.io [OK]",
-        "&gt; OPENING TLS PORT CONNECTORS MATRIX via HTTPS...",
-        "&gt; ENCRYPTING EMAIL VALUE LOG STRINGS (AES-256)...",
-        "&gt; DISPATCHING ASYNCHRONOUS PACKET SUBMISSION TO FORMSPREE...",
-        "&gt; [SUCCESS] RESPONSE CODE 200 INGESTED BY APEX RELAY ENGINE."
-      ];
-      
-      let currentLine = 0;
-      function printNextLine() {
-        if (currentLine < logs.length) {
-          playSoundEffect('click');
-          terminal.innerHTML += `<div>${logs[currentLine]}</div>`;
-          terminal.scrollTop = terminal.scrollHeight;
-          currentLine++;
-          setTimeout(printNextLine, 450);
-        } else {
-          setTimeout(onComplete, 500);
-        }
+      formWrapper.style.display = 'block'; terminal.style.display = 'none';
+      statusText.style.display = 'block'; statusText.style.color = 'var(--silver)';
+      statusText.innerText = '// PIPELINE RELAY RESOLVING PACKETS...';
+
+      try {
+        const response = await fetch('https://formspree.io/f/mwvdndew', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ email: emailValue })
+        });
+        if (response.ok) {
+          statusText.style.color = '#10b981';
+          statusText.innerText = '// TRANSMISSION SECURE. CHECK TARGET COMMUNICATIONS INBOX.';
+          ticker.innerText = "SYS STATUS // TRANSMISSION COMPLETE // SUCCESS";
+          playAudioEffect('chime');
+          emailInput.value = '';
+        } else { throw new Error(); }
+      } catch(err) {
+        statusText.style.color = '#ef4444';
+        statusText.innerText = '// CRITICAL PACKET LOSS FAULT. RE-ATTEMPT TRANSMISSION SUBMIT.';
+        ticker.innerText = "SYS STATUS // PACKET LOSS DETECTED // HALT";
+        playAudioEffect('fail');
       }
-      printNextLine();
+    });
+  }
+
+  /* --- AUDIO ACOUSTICAL SIGNAL FREQUENCY GENERATOR --- */
+  let audioCtx = null;
+  function initAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  function playAudioEffect(type) {
+    try {
+      initAudio();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+
+      if (type === 'blip') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(880, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.1);
+        gainNode.gain.setValueAtTime(0.04, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+        osc.start(now); osc.stop(now + 0.1);
+      } else if (type === 'click') {
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(120, now);
+        osc.frequency.setValueAtTime(40, now + 0.02);
+        gainNode.gain.setValueAtTime(0.15, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        osc.start(now); osc.stop(now + 0.04);
+      } else if (type === 'chime') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(783.99, now + 0.08);
+        gainNode.gain.setValueAtTime(0.03, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc.start(now); osc.stop(now + 0.25);
+      } else if (type === 'fail') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(140, now);
+        osc.frequency.linearRampToValueAtTime(85, now + 0.3);
+        gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now); osc.stop(now + 0.3);
+      }
+    } catch(e){}
+  }
+
+  /* ---------- Ambient Twinkle Starfield Canvas Engine ---------- */
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [], w, h, dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize(){
+    w = window.innerWidth; h = document.documentElement.scrollHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    
+    const count = Math.floor((w * Math.min(h, 4500)) / 4500);
+    stars = Array.from({length: count}, () => ({
+      x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.4 + 0.4,
+      baseAlpha: Math.random() * 0.6 + 0.3, phase: Math.random() * Math.PI * 2,
+      speed: Math.random() * 0.015 + 0.005, hue: Math.random() > 0.8 ? 'purple' : 'cyan'
+    }));
+  }
+  let resizeTimer;
+  window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 150); });
+  resize();
+
+  let t = 0;
+  function draw(){
+    ctx.clearRect(0, 0, w, h);
+    for(const s of stars){
+      const twinkle = Math.sin(t * s.speed * 60 + s.phase) * 0.5 + 0.5;
+      ctx.globalAlpha = s.baseAlpha * (0.4 + twinkle * 0.6) * 0.5;
+      ctx.fillStyle = s.hue === 'purple' ? '#8a6fff' : '#00ffff';
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1; t += 1; requestAnimationFrame(draw);
+  }
+  draw();
+
+  /* ---------- Intersection Element Scroll Reveal ---------- */
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  /* ---------- Parallax Phone Matrix Tilt ---------- */
+  const tiltPhone = document.getElementById('tiltPhone');
+  const heroVisual = document.querySelector('.hero-visual');
+  if(window.matchMedia('(hover: hover)').matches){
+    heroVisual.addEventListener('mousemove', (e) => {
+      const rect = heroVisual.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      if(tiltPhone) tiltPhone.style.transform = `rotateY(${px * 14}deg) rotateX(${-py * 14}deg) translateZ(10px)`;
+    });
+    heroVisual.addEventListener('mouseleave', () => {
+      if(tiltPhone) tiltPhone.style.transform = 'rotateY(0deg) rotateX(0deg)';
+    });
+  }
+
+  /* ---------- Hover Metric Aura Tracker ---------- */
+  document.querySelectorAll('[data-tilt]').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+      card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+    });
+  });
+
+  /* ---------- Milestone Generation Preview Parser ---------- */
+  const topicInput = document.getElementById('topicInput');
+  const generateBtn = document.getElementById('generateBtn');
+  const nodeTrack = document.getElementById('nodeTrack');
+  const hintLine = document.getElementById('hintLine');
+  const quickTopics = document.querySelectorAll('.quick-topic');
+
+  const templates = [
+    { verb: 'Research the fundamentals of', tag: 'DISCOVERY' },
+    { verb: 'Build a working prototype for', tag: 'BUILD' },
+    { verb: 'Test, refine, and launch', tag: 'LAUNCH' }
+  ];
+
+  let generating = false;
+
+  function clean(topic){
+    const t = topic.trim(); if(!t) return null;
+    return t.length > 46 ? t.slice(0, 46) + '…' : t;
+  }
+  function lowerFirst(topic){ return topic.charAt(0).toLowerCase() + topic.slice(1); }
+
+  async function generate(rawTopic){
+    if(generating) return;
+    const topic = clean(rawTopic);
+    if(!topic){
+      topicInput.focus(); topicInput.style.borderColor = 'rgba(255,90,90,0.6)';
+      setTimeout(() => topicInput.style.borderColor = '', 500); return;
+    }
+    generating = true;
+    playAudioEffect('blip');
+    generateBtn.textContent = 'Generating…';
+    nodeTrack.innerHTML = '';
+    hintLine.innerHTML = `Parsing "<span style="color:var(--cyan)">${topic}</span>"… structuring milestone track<span class="cur"></span>`;
+
+    await wait(650);
+
+    for(let i = 0; i < templates.length; i++){
+      const step = templates[i];
+      const node = document.createElement('div');
+      node.className = 'node';
+      node.innerHTML = `
+        <div class="node-line">
+          <div class="node-dot">${String(i+1).padStart(2,'0')}</div>
+          ${i < templates.length - 1 ? '<div class="node-stem"></div>' : ''}
+        </div>
+        <div class="node-body">
+          <h4>${step.verb} ${lowerFirst(topic)}</h4>
+          <p class="mono">MILESTONE_${String(i+1).padStart(2,'0')} · GENERATED LOCALLY</p>
+          <span class="node-tag mono">${step.tag}</span>
+        </div>
+      `;
+      nodeTrack.appendChild(node);
+      playAudioEffect('click');
+      await wait(420);
     }
 
-    /* --- STATIC SITE FORM SUBMISSION ENGINE --- */
-    async function handleBetaSubmit(event) {
-      event.preventDefault();
-      const emailInput = document.getElementById('beta-email');
-      const statusText = document.getElementById('form-status');
-      const ticker = document.getElementById('terminal-ticker');
-      const emailValue = emailInput.value;
-      
-      ticker.innerText = "SYS STATUS // EXECUTING INTAKE TRANSMISSION";
+    hintLine.innerHTML = `3 of 15–30 steps shown · full track generates on-device in the app<span class="cur"></span>`;
+    generateBtn.textContent = 'Generate Roadmap';
+    generating = false;
+  }
 
-      // Runs the immersive terminal streaming lines first
-      streamTerminalLogs(async () => {
-        const terminal = document.getElementById('terminal-stream-box');
-        const formWrapper = document.getElementById('intake-form-wrapper');
-        
-        // Return views back to standard layout and showcase backend server responses
-        formWrapper.style.display = 'block';
-        terminal.style.display = 'none';
-        statusText.style.display = 'block';
-        statusText.style.color = 'var(--text-muted)';
-        statusText.innerText = '// PROCESSING REQUISITION CREDENTIALS...';
+  function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
+  generateBtn.addEventListener('click', () => generate(topicInput.value));
+  topicInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') generate(topicInput.value); });
+  quickTopics.forEach(btn => {
+    btn.addEventListener('click', () => { topicInput.value = btn.dataset.topic; generate(btn.dataset.topic); });
+  });
+</script>
 
-        try {
-          const response = await fetch('https://formspree.io/f/mwvdndew', {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            body: JSON.stringify({ email: emailValue })
-          });
-
-          if (response.ok) {
-            statusText.style.color = '#10B981';
-            statusText.innerText = '// ACCESS GRANTED. CREDENTIAL PACKET SECURELY ROUTED TO INBOX.';
-            ticker.innerText = "SYS STATUS // TRANSMISSION COMPLETE // SUCCESS";
-            playSoundEffect('chime');
-            emailInput.value = '';
-          } else {
-            throw new Error();
-          }
-        } catch (error) {
-          statusText.style.color = '#EF4444';
-          statusText.innerText = '// ERROR: RELAY PIPELINE PACKET FAULT. RETRY BEACON FORM.';
-          ticker.innerText = "SYS STATUS // PACKET LOSS DETECTED // HALT";
-          playSoundEffect('fail');
-        }
-      });
-    }
-  </script>
 </body>
 </html>

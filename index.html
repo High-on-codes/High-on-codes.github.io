@@ -23,6 +23,7 @@
       --text-muted: #64748B;
       --border-color: rgba(0, 242, 254, 0.15);
       --glass-bg: rgba(7, 12, 28, 0.6);
+      --card-gradient: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
     }
 
     * {
@@ -55,11 +56,11 @@
     }
 
     .nebula {
-      position: absolute;
+      position: fixed;
       width: 800px;
       height: 600px;
-      background: radial-gradient(circle, rgba(142, 45, 226, 0.12) 0%, rgba(0, 242, 254, 0.03) 50%, transparent 70%);
-      top: -150px;
+      background: radial-gradient(circle, rgba(142, 45, 226, 0.1) 0%, rgba(0, 242, 254, 0.02) 50%, transparent 70%);
+      top: 20%;
       left: 50%;
       transform: translateX(-50%);
       z-index: -1;
@@ -86,6 +87,11 @@
       align-items: center;
       padding: 2.5rem 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      position: sticky;
+      top: 0;
+      background: rgba(5, 8, 17, 0.8);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
     }
 
     .logo {
@@ -247,6 +253,33 @@
       background: rgba(255, 255, 255, 0.07);
       border-color: rgba(255, 255, 255, 0.2);
       transform: translateY(-3px);
+    }
+
+    /* --- SECTION STRUCTURES --- */
+    section {
+      padding: 6rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .section-header {
+      margin-bottom: 3.5rem;
+      text-align: left;
+    }
+
+    .section-header h2 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #ffffff, #64748B);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .section-header .tagline {
+      color: var(--cyan);
+      font-size: 0.75rem;
+      text-shadow: 0 0 8px var(--cyan-glow);
     }
 
     /* --- THE COMMAND CONSOLE MOCKUP --- */
@@ -641,11 +674,7 @@
       color: rgba(0, 242, 254, 0.3);
     }
 
-    /* --- FEATURE BLOCKS --- */
-    .features-section {
-      padding: 4rem 0 8rem;
-    }
-
+    /* --- FEATURE & CONTENT GRIDS --- */
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -653,7 +682,7 @@
     }
 
     .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+      background: var(--card-gradient);
       border: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 16px;
       padding: 3rem 2.5rem;
@@ -699,9 +728,66 @@
     }
 
     .card p {
-      color: #64748B;
+      color: #94A3B8;
       font-size: 0.95rem;
       line-height: 1.7;
+    }
+
+    /* --- FAQ ACCORDION --- */
+    .faq-wrapper {
+      max-width: 850px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .faq-item {
+      background: var(--card-gradient);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+      border-color: rgba(0, 242, 254, 0.15);
+    }
+
+    .faq-trigger {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .faq-trigger h4 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .faq-icon {
+      color: var(--cyan);
+      transition: transform 0.3s ease;
+    }
+
+    .faq-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, margin-top 0.3s ease;
+      color: #94A3B8;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .faq-item.active-faq .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .faq-item.active-faq .faq-content {
+      max-height: 200px;
+      margin-top: 1rem;
     }
 
     /* --- TOAST NOTIFICATION STYLING --- */
@@ -768,7 +854,7 @@
     @media (max-width: 868px) {
       .pane-telemetry, .pane-support { grid-template-columns: 1fr; gap: 3rem; }
       nav { flex-direction: column; gap: 1.5rem; }
-      .nav-links { gap: 1.5rem; }
+      .nav-links { gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
       footer { flex-direction: column; gap: 1.5rem; }
       .footer-links a { margin: 0 1rem; }
     }
@@ -788,10 +874,10 @@
     <nav>
       <div class="logo mono"><span class="logo-box">Z</span> PROJECT Z</div>
       <div class="nav-links mono">
-        <a href="#features">PROBLEM</a>
+        <a href="#problem">PROBLEM</a>
         <a href="#features">FEATURES</a>
-        <a href="#features">HOW IT WORKS</a>
-        <a href="#features">FAQ</a>
+        <a href="#how-it-works">HOW IT WORKS</a>
+        <a href="#faq">FAQ</a>
       </div>
       <a href="#console-anchor" onclick="toggleConsoleView('support')" class="btn-nav mono">JOIN BETA</a>
     </nav>
@@ -812,6 +898,31 @@
         <span class="requirement-notice mono">⚠️ CRITICAL REQUIREMENT: Requires compatible device supporting Apple Intelligence</span>
       </div>
     </header>
+
+    <!-- SECTION 1: THE PROBLEM AREA -->
+    <section id="problem">
+      <div class="section-header">
+        <div class="tagline mono">// THE ARCHITECTURAL CORE FAULT</div>
+        <h2>The Centralized Data Crisis</h2>
+      </div>
+      <div class="grid-container">
+        <div class="card">
+          <div class="card-icon mono">01 / LATENCY</div>
+          <h3>Cloud Congestion</h3>
+          <p>Traditional log analyzers depend heavily on distant data facilities. Sending vast stack dumps across multiple hops degrades your device speed, limits offline iteration, and spikes parsing latency structures.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon mono">02 / EXPOSURE</div>
+          <h3>Silent Surveillance Perimeter</h3>
+          <p>Modern analytical frameworks subtly harvest execution metrics, device payloads, and structural configurations. Your private code logic becomes cloud metadata footprints without active consent boundaries.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon mono">03 / BLOCKS</div>
+          <h3>System Overhead Bottlenecks</h3>
+          <p>Heavy tracing systems drain processing resources, resulting in runtime interface freezes during processing loops. App performance shouldn't collapse just to view structured milestone diagnostics.</p>
+        </div>
+      </div>
+    </section>
 
     <!-- MAIN CONSOLE INTERACTION PLATFORM -->
     <span id="console-anchor"></span>
@@ -993,8 +1104,12 @@
       </div>
     </section>
 
-    <!-- TRIPLE CARD CORE FEATURE GRID -->
-    <section id="features" class="features-section">
+    <!-- SECTION 2: THE FEATURES GRID -->
+    <section id="features">
+      <div class="section-header">
+        <div class="tagline mono">// CAPABILITY MATRIX OVERVIEW</div>
+        <h2>Sovereign Client Specs</h2>
+      </div>
       <div class="grid-container">
         <div class="card">
           <div class="card-icon mono">PRIVACY</div>
@@ -1012,6 +1127,71 @@
           <div class="card-icon mono">FEEDBACK</div>
           <h3 class="mono">Tactile Mechanical Feedback</h3>
           <p>Describe the ultra-smooth physics-based spring animations that make tracking milestones feel physically satisfying.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: HOW IT WORKS EXPLANATION -->
+    <section id="how-it-works">
+      <div class="section-header">
+        <div class="tagline mono">// PIPELINE AUTOMATION MAP</div>
+        <h2>The On-Device Processing Loop</h2>
+      </div>
+      <div class="grid-container">
+        <div class="card">
+          <div class="card-icon mono">STEP 01</div>
+          <h3>String Ingestion Hook</h3>
+          <p>The client hooks into your clipboard or raw system log outputs, mapping incoming technical telemetry dumps securely into localized temporary execution zones.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon mono">STEP 02</div>
+          <h3>Neural Engine Breakdown</h3>
+          <p>Leveraging Apple Intelligence hardware primitives, local processing parsers analyze data stacks, sort dependency maps, and build milestone metrics directly inside your secure enclosure.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon mono">STEP 03</div>
+          <h3>Visual Orbit Assembly</h3>
+          <p>The app transforms raw text logs into interactive milestones instantly. Milestones map out with smooth spring-based physics for highly scannable workflow monitoring.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: INTERACTIVE FAQ CONTEXT CONTAINER -->
+    <section id="faq">
+      <div class="section-header">
+        <div class="tagline mono">// OPERATIONAL MANUAL RETRIEVAL</div>
+        <h2>Frequently Checked Manifests</h2>
+      </div>
+      
+      <div class="faq-wrapper">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-trigger">
+            <h4>Is my logging configuration really safe?</h4>
+            <span class="faq-icon mono">+</span>
+          </div>
+          <div class="faq-content">
+            <p>Completely. Project Z never establishes communication connections to central remote clouds for execution logs. All string calculations run strictly inside volatile app memory layers and wipe entirely when closing the interface process.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-trigger">
+            <h4>Why is Apple Intelligence strictly required?</h4>
+            <span class="faq-icon mono">+</span>
+          </div>
+          <div class="faq-content">
+            <p>To maintain zero server dependency, the complex language parsing models operate using on-device structural neural processing. This requires modern system architectures engineered exclusively for offline intelligence workflows.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-trigger">
+            <h4>How can I export completed tracking roadmaps?</h4>
+            <span class="faq-icon mono">+</span>
+          </div>
+          <div class="faq-content">
+            <p>Roadmaps compress safely into a standardized clean text string configuration or portable data dump array. You can paste these directly into separate documentation logs anywhere you want.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -1081,6 +1261,15 @@
 
     resizeCanvas();
     animateStars();
+
+    /* --- FAQ INTERACTIVE ACCORDION TOGGLE --- */
+    function toggleFaq(element) {
+      const activeItems = document.querySelectorAll('.faq-item.active-faq');
+      activeItems.forEach(item => {
+        if(item !== element) item.classList.remove('active-faq');
+      });
+      element.classList.toggle('active-faq');
+    }
 
     /* --- TOAST INTERACTIVE TRIGGER --- */
     let toastTimeout;

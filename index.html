@@ -674,7 +674,7 @@
       color: rgba(0, 242, 254, 0.3);
     }
 
-    /* --- FEATURE & CONTENT GRIDS --- */
+    /* --- FEATURE & CONTENT GRIDS WITH MATRIX GLOW MAPS --- */
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -687,7 +687,29 @@
       border-radius: 16px;
       padding: 3rem 2.5rem;
       position: relative;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* -- EXPLICIT FEATURE 4 MOUSE TRACKER PERIMETER -- */
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 16px;
+      background: radial-gradient(800px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(0, 242, 254, 0.06), transparent 40%);
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
+    .card * {
+      position: relative;
+      z-index: 2; /* Forces text content above background cursor glow links */
     }
 
     .card::before {
@@ -697,12 +719,13 @@
       background: linear-gradient(90deg, var(--cyan), var(--purple-light));
       opacity: 0;
       transition: opacity 0.3s ease;
+      z-index: 3;
     }
 
     .card:hover {
       transform: translateY(-6px);
-      border-color: rgba(0, 242, 254, 0.2);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      border-color: rgba(0, 242, 254, 0.25);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 242, 254, 0.05);
     }
 
     .card:hover::before {
@@ -927,7 +950,7 @@
         <a href="#how-it-works">HOW IT WORKS</a>
         <a href="#faq">FAQ</a>
       </div>
-      <a href="#console-anchor" onclick="toggleConsoleView('support')" class="btn-nav mono">JOIN BETA</a>
+      <a href="#console-anchor" class="btn-nav mono">JOIN BETA</a>
     </nav>
 
     <!-- HERO INTRODUCTION -->
@@ -1275,6 +1298,81 @@
 
   <!-- CONTROL SYSTEM SCRIPTS -->
   <script>
+    /* --- FEATURE 4: MATRIX MOUSE-TRACKING GLOW MUTE VECTOR --- */
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+
+    /* --- FEATURE 3: HIGH-FIDELITY WEB AUDIO FREQUENCY SYNTHESIZER --- */
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSoundEffect(type) {
+      try {
+        initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'blip') {
+          // Sharp, futuristic tab blip
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(880, now);
+          osc.frequency.exponentialRampToValueAtTime(110, now + 0.1);
+          gainNode.gain.setValueAtTime(0.04, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+          osc.start(now);
+          osc.stop(now + 0.1);
+        } else if (type === 'click') {
+          // Tactile structural mechanical latch click
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(120, now);
+          osc.frequency.setValueAtTime(40, now + 0.02);
+          gainNode.gain.setValueAtTime(0.2, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+          osc.start(now);
+          osc.stop(now + 0.04);
+        } else if (type === 'chime') {
+          // Hardware validation success chime sequence
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, now); // D5
+          osc.frequency.setValueAtTime(880, now + 0.08); // A5
+          gainNode.gain.setValueAtTime(0.03, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'fail') {
+          // Low hardware error block tone
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(130, now);
+          osc.frequency.linearRampToValueAtTime(90, now + 0.3);
+          gainNode.gain.setValueAtTime(0.06, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        }
+      } catch (e) {
+        // Fallback catch block to handle browser policy blocks cleanly
+      }
+    }
+
     /* --- STARFIELD RENDERING ENGINE --- */
     const canvas = document.getElementById('space-canvas');
     const ctx = canvas.getContext('2d');
@@ -1341,22 +1439,26 @@
       
       display.style.color = 'var(--cyan)';
       display.innerText = '[RUNNING] VERIFYING NEURAL CORES ARCHITECTURE MAPS...';
+      playSoundEffect('blip');
       
       setTimeout(() => {
         if (selection.startsWith('fail')) {
           display.style.color = '#EF4444';
           display.style.borderLeftColor = '#EF4444';
           display.innerText = '[HALT] NEURAL MATRIX INSUFFICIENT. DETECTING LACK OF LOCAL APPLE INTELLIGENCE CORES.';
+          playSoundEffect('fail');
         } else {
           display.style.color = '#10B981';
           display.style.borderLeftColor = '#10B981';
           display.innerText = '[READY] CORES ENCLOSED SECURELY. COMPATIBLE LOCAL ENGINE PIPELINE CONFIRMED.';
+          playSoundEffect('chime');
         }
       }, 600);
     }
 
     /* --- FAQ INTERACTIVE ACCORDION TOGGLE --- */
     function toggleFaq(element) {
+      playSoundEffect('click');
       const activeItems = document.querySelectorAll('.faq-item.active-faq');
       activeItems.forEach(item => {
         if(item !== element) item.classList.remove('active-faq');
@@ -1367,6 +1469,7 @@
     /* --- TOAST INTERACTIVE TRIGGER --- */
     let toastTimeout;
     function triggerToast() {
+      playSoundEffect('chime');
       const toast = document.getElementById('toast-notification');
       
       toast.classList.remove('show');
@@ -1385,6 +1488,7 @@
     const maxStrokeOffset = 565.48;
 
     function clickTask(element, index) {
+      playSoundEffect('click');
       element.classList.toggle('active-task');
       
       const activeTasks = document.querySelectorAll('.task.active-task').length;
@@ -1402,6 +1506,7 @@
 
     /* --- VIEW STATE ROUTER --- */
     function toggleConsoleView(view) {
+      playSoundEffect('blip');
       const panes = ['pane-telemetry', 'pane-privacy', 'pane-terms', 'pane-support'];
       const tabs = ['btn-tab-telemetry', 'btn-tab-privacy', 'btn-tab-terms', 'btn-tab-support'];
       
@@ -1455,6 +1560,7 @@
       let currentLine = 0;
       function printNextLine() {
         if (currentLine < logs.length) {
+          playSoundEffect('click');
           terminal.innerHTML += `<div>${logs[currentLine]}</div>`;
           terminal.scrollTop = terminal.scrollHeight;
           currentLine++;
@@ -1502,6 +1608,7 @@
             statusText.style.color = '#10B981';
             statusText.innerText = '// ACCESS GRANTED. CREDENTIAL PACKET SECURELY ROUTED TO INBOX.';
             ticker.innerText = "SYS STATUS // TRANSMISSION COMPLETE // SUCCESS";
+            playSoundEffect('chime');
             emailInput.value = '';
           } else {
             throw new Error();
@@ -1510,6 +1617,7 @@
           statusText.style.color = '#EF4444';
           statusText.innerText = '// ERROR: RELAY PIPELINE PACKET FAULT. RETRY BEACON FORM.';
           ticker.innerText = "SYS STATUS // PACKET LOSS DETECTED // HALT";
+          playSoundEffect('fail');
         }
       });
     }

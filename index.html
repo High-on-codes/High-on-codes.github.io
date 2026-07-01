@@ -267,11 +267,15 @@
     box-shadow: 0 0 12px rgba(0,255,255,0.2);
     display: flex; align-items: center; justify-content: center; transition: all 0.2s;
   }
+  
+  /* Dynamic Verification States linked via JavaScript mapping mechanics */
   .cosmic-node-anchor.completed-node .cosmic-globe-sphere {
-    background: radial-gradient(circle at 35% 35%, #10b981 0%, #03140f 80%);
-    box-shadow: 0 0 15px rgba(16,185,129,0.3);
+    background: radial-gradient(circle at 35% 35%, #10b981 0%, #03140f 80%) !important;
+    box-shadow: 0 0 18px rgba(16,185,129,0.5) !important;
   }
-  .cosmic-globe-sphere svg { width: 14px; height: 14px; color: #fff; }
+  .cosmic-globe-sphere svg { width: 14px; height: 14px; color: #fff; display: none; }
+  .cosmic-node-anchor.completed-node .cosmic-globe-sphere svg { display: block; }
+  
   .cosmic-node-title {
     font-size: 8px; color: var(--silver); margin-top: 10px; max-width: 110px; line-height: 1.4;
   }
@@ -615,19 +619,19 @@
               <div class="metrics-strip">
                 <div class="metric-block">
                   <span class="lbl mono">TOTAL CURRICULUM DEPTH</span>
-                  <div class="val">180 MIN</div>
+                  <div class="val" id="app-depth-val">180 MIN</div>
                 </div>
                 <div class="metric-block" style="text-align: right;">
                   <span class="lbl mono">REMAINING QUANTUM</span>
-                  <div class="val cyan-txt">170 MIN LEFT</div>
+                  <div class="val cyan-txt" id="app-quantum-val">170 MIN LEFT</div>
                 </div>
               </div>
 
-              <div class="mono" style="font-size: 7px; color: var(--faint); text-align: left; margin-bottom: 2px;">
+              <div class="mono" style="font-size: 7px; color: var(--faint); text-align: left; margin-bottom: 2px;" id="app-pct-lbl">
                 PROCESSING TELEMETRY // 1/18 PHASES COMPLETED (5%)
               </div>
               <div style="width:100%; height:3px; background: rgba(255,255,255,0.05); border-radius:2px; margin-bottom:12px; overflow:hidden;">
-                <div style="width:5%; height:100%; background: var(--cyan);"></div>
+                <div style="width:5%; height:100%; background: var(--cyan); transition: width 0.4s ease;" id="app-progress-bar"></div>
               </div>
 
               <div class="mock-input-field mono">Specify architectural sector configuration...</div>
@@ -645,20 +649,25 @@
                   <path d="M50,40 Q150,120 50,200 T150,360" fill="none" stroke="rgba(0,255,255,0.3)" stroke-width="1" stroke-dasharray="3,3"/>
                 </svg>
 
-                <div class="cosmic-node-anchor completed-node" onclick="triggerInAppModal('Introduction to Neural Networks')">
+                <!-- Added dynamic step check toggling matrices directly onto node structures -->
+                <div class="cosmic-node-anchor completed-node" id="node-0" onclick="toggleAppNode(0, 'Introduction to Neural Networks')">
                   <div class="cosmic-globe-sphere">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                   </div>
                   <span class="cosmic-node-title mono">Introduction to Neural Networks</span>
                 </div>
 
-                <div class="cosmic-node-anchor" onclick="triggerInAppModal('Understanding Neurons and Synapses')">
-                  <div class="cosmic-globe-sphere" style="background: radial-gradient(circle at 35% 35%, #00ffff 0%, #06183a 70%);"></div>
+                <div class="cosmic-node-anchor" id="node-1" onclick="toggleAppNode(1, 'Understanding Neurons and Synapses')">
+                  <div class="cosmic-globe-sphere" style="background: radial-gradient(circle at 35% 35%, #00ffff 0%, #06183a 70%);">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                  </div>
                   <span class="cosmic-node-title mono">Understanding Neurons and Synapses</span>
                 </div>
 
-                <div class="cosmic-node-anchor" onclick="triggerInAppModal('Feedforward Neural Networks')">
-                  <div class="cosmic-globe-sphere" style="background: radial-gradient(circle at 35% 35%, #00b3ff 0%, #041026 70%);"></div>
+                <div class="cosmic-node-anchor" id="node-2" onclick="toggleAppNode(2, 'Feedforward Neural Networks')">
+                  <div class="cosmic-globe-sphere" style="background: radial-gradient(circle at 35% 35%, #00b3ff 0%, #041026 70%);">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                  </div>
                   <span class="cosmic-node-title mono">Feedforward Neural Networks</span>
                 </div>
               </div>
@@ -724,7 +733,7 @@
       </div>
     </section>
 
-    <!-- INTERACTIVE PATH BUILDER PREVIEW -->
+    <!-- INTERACTIVE TEASER -->
     <section id="teaser">
       <div class="section-head reveal">
         <span class="eyebrow mono">Live Preview</span>
@@ -738,7 +747,7 @@
           <div class="t mono">roadmap_engine.local — awaiting input</div>
         </div>
 
-        <div class="teaser-input-row">
+        <div class="teaser-input-deck">
           <span class="prompt mono">&gt;</span>
           <div class="teaser-field-wrapper">
             <input id="topicInput" type="text" placeholder="e.g. Build a Rocket" maxlength="46" autocomplete="off">
@@ -758,7 +767,7 @@
       </div>
     </section>
 
-    <!-- ARCHITECTURE MATRIX SPECS -->
+    <!-- ARCHITECTURE / BLUEPRINTS -->
     <section id="architecture" class="blueprint-section">
       <div class="section-head reveal">
         <span class="eyebrow mono">Engineering Schematic</span>
@@ -816,7 +825,7 @@
       </div>
     </section>
 
-    <!-- MISSION CONTROL COHORT PANEL DOCK -->
+    <!-- COHORT TERMINAL -->
     <section id="beta-intake" class="intake-section">
       <div class="terminal-window">
         
@@ -878,7 +887,7 @@
       </div>
     </section>
 
-    <!-- ENTRY DOWNLOAD ACCENTS -->
+    <!-- DOWNLOAD ACTION SECTORS -->
     <section class="cta-section reveal" id="download">
       <span class="eyebrow mono">Ready for launch</span>
       <h2>Chart your next roadmap tonight.</h2>
@@ -895,7 +904,7 @@
 
   </main>
 
-  <!-- FOOTER CLOSURE METRICS -->
+  <!-- FOOTER -->
   <footer>
     <div class="footer-top">
       <div class="logo">
@@ -919,7 +928,7 @@
   </footer>
 </div>
 
-<!-- LEGAL DIALOGUE PORT CONTROLLERS -->
+<!-- LEGAL PANEL OVERLAYS -->
 <div id="panel-privacy" class="legal-overlay" onclick="closeLegalPanel('privacy')">
   <div class="legal-container" onclick="event.stopPropagation()">
     <div class="legal-window-header">
@@ -959,24 +968,54 @@
 </div>
 
 <script>
+  /* --- STEP COMPLETION AND AUTOMATIC PROGRESS METRICS TRACKER --- */
+  // Initial state maps tracking 1 node completed by default matching image 0001
+  let nodeStates = [true, false, false]; 
+  const totalAppSectors = 18;
+
+  function toggleAppNode(index, title) {
+    playAudioEffect('click');
+    
+    // Toggle state selection
+    nodeStates[index] = !nodeStates[index];
+    
+    const nodeElement = document.getElementById(`node-${index}`);
+    if (nodeStates[index]) {
+      nodeElement.classList.add('completed-node');
+    } else {
+      nodeElement.classList.remove('completed-node');
+    }
+    
+    // Calculate total active completions
+    const completedCount = nodeStates.filter(Boolean).length;
+    
+    // Calculate dynamic math arrays matching screenshot structures
+    const baseCurriculumDepth = 180; 
+    const calculatedQuantumRemaining = baseCurriculumDepth - (completedCount * 10);
+    const progressPercentage = Math.round((completedCount / totalAppSectors) * 100);
+    
+    // Re-render strings inside elements
+    document.getElementById('app-quantum-val').innerText = `${calculatedQuantumRemaining} MIN LEFT`;
+    document.getElementById('app-pct-lbl').innerText = `PROCESSING TELEMETRY // ${completedCount}/${totalAppSectors} PHASES COMPLETED (${progressPercentage}%)`;
+    document.getElementById('app-progress-bar').style.width = `${progressPercentage}%`;
+    
+    // Trigger pop-up summary inspection details
+    triggerInAppModal(title);
+  }
+
   /* --- TOAST SYSTEM ALERTS ANIMATOR --- */
-  let toastTimer = null;
+  let toastTimeout = null;
   function triggerSpacecraftToast() {
     playAudioEffect('chime');
     const toast = document.getElementById('system-toast-dock');
-    
     toast.classList.remove('active-toast');
-    clearTimeout(toastTimer);
-    
+    clearTimeout(toastTimeout);
     void toast.offsetWidth;
     toast.classList.add('active-toast');
-    
-    toastTimer = setTimeout(() => {
-      toast.classList.remove('active-toast');
-    }, 4500);
+    toastTimeout = setTimeout(() => { toast.classList.remove('active-toast'); }, 4500);
   }
 
-  /* --- APP PANES WORKSPACE ROUTERS --- */
+  /* --- IN-APP ACTIVE VIEW STATES PANEL ROUTING --- */
   function switchAppPane(mode) {
     playAudioEffect('blip');
     const dashPane = document.getElementById('app-pane-dash');
@@ -999,7 +1038,6 @@
 
   /* --- INTERACTIVE INSPECTOR MODAL --- */
   function triggerInAppModal(nodeTitle) {
-    playAudioEffect('blip');
     const modal = document.getElementById('inapp-modal');
     const title = document.getElementById('modal-node-title');
     title.innerText = nodeTitle.toUpperCase();
@@ -1112,45 +1150,6 @@
         playAudioEffect('fail');
       }
     });
-  }
-
-  /* --- AUDIO ACOUSTICAL SIGNAL FREQUENCY GENERATOR --- */
-  let audioCtx = null;
-  function initAudio() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  function playAudioEffect(type) {
-    try {
-      initAudio();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      osc.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      const now = audioCtx.currentTime;
-
-      if (type === 'blip') {
-        osc.type = 'sine'; osc.frequency.setValueAtTime(880, now);
-        osc.frequency.exponentialRampToValueAtTime(110, now + 0.1);
-        gainNode.gain.setValueAtTime(0.04, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-        osc.start(now); osc.stop(now + 0.1);
-      } else if (type === 'click') {
-        osc.type = 'triangle'; osc.frequency.setValueAtTime(120, now);
-        osc.frequency.setValueAtTime(40, now + 0.02);
-        gainNode.gain.setValueAtTime(0.15, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-        osc.start(now); osc.stop(now + 0.04);
-      } else if (type === 'chime') {
-        osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, now);
-        osc.frequency.setValueAtTime(783.99, now + 0.08);
-        gainNode.gain.setValueAtTime(0.03, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-        osc.start(now); osc.stop(now + 0.25);
-      } else if (type === 'fail') {
-        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(140, now);
-        osc.frequency.linearRampToValueAtTime(85, now + 0.3);
-        gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-        osc.start(now); osc.stop(now + 0.3);
-      }
-    } catch(e){}
   }
 
   /* ---------- Ambient Twinkle Starfield Canvas Engine ---------- */
@@ -1279,13 +1278,6 @@
     generateBtn.textContent = 'Generate Roadmap';
     generating = false;
   }
-
-  function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
-  generateBtn.addEventListener('click', () => generate(topicInput.value));
-  topicInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') generate(topicInput.value); });
-  quickTopics.forEach(btn => {
-    btn.addEventListener('click', () => { topicInput.value = btn.dataset.topic; generate(btn.dataset.topic); });
-  });
 </script>
 
 </body>

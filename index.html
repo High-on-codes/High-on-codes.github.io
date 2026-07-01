@@ -333,17 +333,17 @@
   .feature-card h3{font-size:17px;margin-bottom:11px;font-family:'JetBrains Mono',monospace;}
   .feature-card p{color:var(--silver);font-size:13.8px;line-height:1.7;}
 
-  /* ---------- Try It Input Block Layout Realignment ---------- */
+  /* ---------- Try It Input Block Layout ---------- */
   .teaser-wrap{
     background:var(--panel); border:1px solid var(--border); border-radius:22px;
     padding:44px; box-shadow:0 30px 90px -40px rgba(0,255,255,0.15); text-align: left;
   }
   @media (max-width:640px){.teaser-wrap{padding:26px 20px;}}
   .teaser-bar{border-bottom:1px dashed var(--border); padding-bottom:12px; margin-bottom: 24px;}
-  .teaser-bar span{width:9px; height:9px; border-radius:50%; background:#232a3c;}
-  .teaser-bar .t{font-size:11px; color:var(--faint); margin-left:8px; letter-spacing:.05em;}
+  .teaser-bar .dots-line { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .teaser-bar span { width:9px; height:9px; border-radius:50%; background:#232a3c; }
+  .teaser-bar .t{font-family: 'JetBrains Mono', monospace; font-size:11px; color:var(--faint); letter-spacing:.05em;}
   
-  /* Row Layout Alignment */
   .teaser-input-row {
     display: flex; 
     align-items: center; 
@@ -594,7 +594,7 @@
     <a href="#architecture">Architecture</a>
     <a href="#beta-intake">Mission Control</a>
   </div>
-  <button class="nav-cta mono" onclick="triggerSpacecraftToast()">Get the App</button>
+  <button class="nav-cta mono" onclick="window.triggerSpacecraftToast()">Get the App</button>
 </nav>
 
 <div class="container">
@@ -607,7 +607,7 @@
         <h1>Map your objectives in <span class="grad">deep space</span>. Zero tracking. Total control.</h1>
         <p class="sub">Project Z turns any goal into a structured 15-to-30 step roadmap, generated entirely on-device by a local AI engine. No cloud database, no telemetry, no account — your plan never leaves your pocket.</p>
         <div class="hero-actions">
-          <button class="btn-primary mono" onclick="triggerSpacecraftToast()">
+          <button class="btn-primary mono" onclick="window.triggerSpacecraftToast()">
             <div>
               <span class="sub">Download on the</span>
               <span>App Store</span>
@@ -635,8 +635,8 @@
             </div>
 
             <div class="app-mode-switch-dock">
-              <button class="app-mode-btn active-mode mono" id="btn-mode-dash" onclick="switchAppPane('dash')">AUTOMATED CORE</button>
-              <button class="app-mode-btn mono" id="btn-mode-map" onclick="switchAppPane('map')">MANUAL TRACK</button>
+              <button class="app-mode-btn active-mode mono" id="btn-mode-dash" onclick="window.switchAppPane('dash')">AUTOMATED CORE</button>
+              <button class="app-mode-btn mono" id="btn-mode-map" onclick="window.switchAppPane('map')">MANUAL TRACK</button>
             </div>
 
             <!-- TAB PANE 1: CORE TELEMETRY DASHBOARD -->
@@ -665,7 +665,7 @@
               </div>
 
               <div class="mock-input-field mono">Specify architectural sector configuration...</div>
-              <button class="big-action-trigger mono" onclick="switchAppPane('map')">START THE BUILT-IN CORE</button>
+              <button class="big-action-trigger mono" onclick="window.switchAppPane('map')">START THE BUILT-IN CORE</button>
             </div>
 
             <!-- TAB PANE 2: PLANETARY NODES CONSTELLATION -->
@@ -679,21 +679,21 @@
                   <path d="M50,40 Q150,120 50,200 T150,360" fill="none" stroke="rgba(0,255,255,0.3)" stroke-width="1" stroke-dasharray="3,3"/>
                 </svg>
 
-                <div class="cosmic-node-anchor completed-node" id="node-0" onclick="toggleAppNode(0, 'Introduction to Neural Networks')">
+                <div class="cosmic-node-anchor completed-node" id="node-0" onclick="window.toggleAppNode(0, 'Introduction to Neural Networks')">
                   <div class="cosmic-globe-sphere">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                   </div>
                   <span class="cosmic-node-title mono">Introduction to Neural Networks</span>
                 </div>
 
-                <div class="cosmic-node-anchor" id="node-1" onclick="toggleAppNode(1, 'Understanding Neurons and Synapses')">
+                <div class="cosmic-node-anchor" id="node-1" onclick="window.toggleAppNode(1, 'Understanding Neurons and Synapses')">
                   <div class="cosmic-globe-sphere" style="background: radial-gradient(circle at 35% 35%, #00ffff 0%, #06183a 70%);">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                   </div>
                   <span class="cosmic-node-title mono">Understanding Neurons and Synapses</span>
                 </div>
 
-                <div class="cosmic-node-anchor" id="node-2" onclick="toggleAppNode(2, 'Feedforward Neural Networks')">
+                <div class="cosmic-node-anchor" id="node-2" onclick="window.toggleAppNode(2, 'Feedforward Neural Networks')">
                   <div class="cosmic-globe-sphere" style="background: radial-gradient(circle at 35% 35%, #00b3ff 0%, #041026 70%);">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                   </div>
@@ -707,7 +707,7 @@
               <div class="inapp-box-panel">
                 <div class="modal-top-meta mono">
                   <span>MODULE SECTOR ANALYSIS // 02</span>
-                  <button class="modal-close-trigger" onclick="closeInAppModal()">✕</button>
+                  <button class="modal-close-trigger" onclick="window.closeInAppModal()">✕</button>
                 </div>
                 <h4 id="modal-node-title">UNDERSTANDING NEURONS AND SYNAPSES</h4>
                 
@@ -723,7 +723,7 @@
                   <div class="media-sub-label mono">Harvard Online</div>
                 </div>
 
-                <button class="big-action-trigger mono" style="border-radius:6px; font-size:9px; padding:8px;" onclick="closeInAppModal()">COMPLETE OBJECTIVE NODE</button>
+                <button class="big-action-trigger mono" style="border-radius:6px; font-size:9px; padding:8px;" onclick="window.closeInAppModal()">COMPLETE OBJECTIVE NODE</button>
               </div>
             </div>
 
@@ -783,14 +783,14 @@
           <div class="teaser-field-wrapper">
             <input id="topicInput" type="text" placeholder="e.g. Build a Rocket" maxlength="46" autocomplete="off">
           </div>
-          <button id="generateBtn" class="mono" onclick="generate(document.getElementById('topicInput').value)">Generate Roadmap</button>
+          <button id="generateBtn" class="mono" onclick="window.generate(document.getElementById('topicInput').value)">Generate Roadmap</button>
         </div>
 
         <div class="quick-topics">
-          <button class="quick-topic mono" onclick="runQuickTopic('Build a Rocket')">Build a Rocket</button>
-          <button class="quick-topic mono" onclick="runQuickTopic('Launch a Podcast')">Launch a Podcast</button>
-          <button class="quick-topic mono" onclick="runQuickTopic('Learn Piano')">Learn Piano</button>
-          <button class="quick-topic mono" onclick="runQuickTopic('Ship a Startup')">Ship a Startup</button>
+          <button class="quick-topic mono" onclick="window.runQuickTopic('Build a Rocket')">Build a Rocket</button>
+          <button class="quick-topic mono" onclick="window.runQuickTopic('Launch a Podcast')">Launch a Podcast</button>
+          <button class="quick-topic mono" onclick="window.runQuickTopic('Learn Piano')">Learn Piano</button>
+          <button class="quick-topic mono" onclick="window.runQuickTopic('Ship a Startup')">Ship a Startup</button>
         </div>
 
         <div class="node-track" id="nodeTrack"></div>
@@ -837,7 +837,7 @@
           
           <div class="validator-container">
             <span class="tech-label mono" style="color: var(--cyan); font-size:10px;">// SYSTEM HARDWARE VALIDATION</span>
-            <select id="chip-selector" class="validator-select" onchange="runChipDiagnostic()">
+            <select id="chip-selector" class="validator-select" onchange="window.runChipDiagnostic()">
               <option value="">-- SELECT SYSTEM CHIP ARCHITECTURE --</option>
               <option value="fail_legacy">Apple Legacy Chips (A15 / A16 Bionic)</option>
               <option value="pass_pro">Apple A17 Pro (iPhone 15 Pro Base)</option>
@@ -867,9 +867,9 @@
             <div class="terminal-dot green"></div>
           </div>
           <div class="terminal-header-tabs">
-            <span class="terminal-tab-nav mono" onclick="openLegalPanel('privacy')">telemetry_core.sh</span>
-            <span class="terminal-tab-nav mono" onclick="openLegalPanel('privacy')">privacy_policy.txt</span>
-            <span class="terminal-tab-nav mono" onclick="openLegalPanel('terms')">terms_of_service.conf</span>
+            <span class="terminal-tab-nav mono" onclick="window.openLegalPanel('privacy')">telemetry_core.sh</span>
+            <span class="terminal-tab-nav mono" onclick="window.openLegalPanel('privacy')">privacy_policy.txt</span>
+            <span class="terminal-tab-nav mono" onclick="window.openLegalPanel('terms')">terms_of_service.conf</span>
             <span class="terminal-tab-nav active-tab-nav mono">mission_control.log</span>
           </div>
           <span class="terminal-header-dir mono">~/ROOT/MISSION_CONTROL</span>
@@ -882,7 +882,7 @@
             <span class="sub-tagline mono">INITIALIZE OPERATOR PROVISIONING</span>
             <p class="brief-para">Ready to deploy Project Z on your local mobile rig? Input your operational communication address below. Our automated backend gateway will instantly route an official orbital transmission containing your secure download credentials.</p>
             
-            <form id="beta-form" onsubmit="handleBetaSubmit(event)">
+            <form id="beta-form" onsubmit="window.handleBetaSubmit(event)">
               <div class="beta-form-container">
                 <input type="email" id="beta-email" name="email" class="beta-input mono" required placeholder="operator@constellation.io">
                 <button type="submit" class="beta-btn mono">SUBMIT DATA</button>
@@ -924,7 +924,7 @@
       <h2>Chart your next roadmap tonight.</h2>
       <p>Get instant architectural optimization, built natively for iOS with advanced computational telemetry mapping.</p>
       <div class="cta-actions">
-        <div class="store-badge" aria-label="Download on the App Store" onclick="triggerSpacecraftToast()">
+        <div class="store-badge" aria-label="Download on the App Store" onclick="window.triggerSpacecraftToast()">
           <div class="terminal-badge-icon mono">ARM64</div>
           <span class="txt"><span class="small">Download on the</span><span class="big">App Store</span></span>
         </div>
@@ -943,11 +943,11 @@
         PROJECT Z
       </div>
       <div class="footer-links mono">
-        <a onclick="openLegalPanel('privacy')">Privacy Policy</a>
-        <a onclick="openLegalPanel('terms')">Terms of Service</a>
+        <a onclick="window.openLegalPanel('privacy')">Privacy Policy</a>
+        <a onclick="window.openLegalPanel('terms')">Terms of Service</a>
         <a href="#beta-intake">Support</a>
       </div>
-      <div class="store-badge" aria-label="Download on the App Store" onclick="triggerSpacecraftToast()">
+      <div class="store-badge" aria-label="Download on the App Store" onclick="window.triggerSpacecraftToast()">
         <div class="terminal-badge-icon mono">v1.0.0</div>
         <span class="txt"><span class="small">Download on the</span><span class="big">App Store</span></span>
       </div>
@@ -960,11 +960,11 @@
 </div>
 
 <!-- LEGAL PANEL OVERLAYS -->
-<div id="panel-privacy" class="legal-overlay" onclick="closeLegalPanel('privacy')">
+<div id="panel-privacy" class="legal-overlay" onclick="window.closeLegalPanel('privacy')">
   <div class="legal-container" onclick="event.stopPropagation()">
     <div class="legal-window-header">
       <span class="eyebrow mono">Sovereign Protection Framework</span>
-      <button class="legal-close-btn mono" onclick="closeLegalPanel('privacy')">CLOSE_SYS</button>
+      <button class="legal-close-btn mono" onclick="window.closeLegalPanel('privacy')">CLOSE_SYS</button>
     </div>
     <div class="legal-content-body">
       <h3>PRIVACY CHARTER & CORPORATE POLICY</h3>
@@ -979,11 +979,11 @@
   </div>
 </div>
 
-<div id="panel-terms" class="legal-overlay" onclick="closeLegalPanel('terms')">
+<div id="panel-terms" class="legal-overlay" onclick="window.closeLegalPanel('terms')">
   <div class="legal-container" onclick="event.stopPropagation()">
     <div class="legal-window-header">
       <span class="eyebrow mono">End-User Operational License</span>
-      <button class="legal-close-btn mono" onclick="closeLegalPanel('terms')">CLOSE_SYS</button>
+      <button class="legal-close-btn mono" onclick="window.closeLegalPanel('terms')">CLOSE_SYS</button>
     </div>
     <div class="legal-content-body">
       <h3>TERMS AND COMMERCIAL AGREEMENT</h3>
@@ -1003,7 +1003,7 @@
   let nodeStates = [true, false, false]; 
   const totalAppSectors = 18;
 
-  function toggleAppNode(index, title) {
+  window.toggleAppNode = function(index, title) {
     playAudioEffect('click');
     nodeStates[index] = !nodeStates[index];
     
@@ -1023,12 +1023,12 @@
     document.getElementById('app-pct-lbl').innerText = `PROCESSING TELEMETRY // ${completedCount}/${totalAppSectors} PHASES COMPLETED (${progressPercentage}%)`;
     document.getElementById('app-progress-bar').style.width = `${progressPercentage}%`;
     
-    triggerInAppModal(title);
+    window.triggerInAppModal(title);
   }
 
   /* --- TOAST SYSTEM ALERTS ANIMATOR --- */
   let toastTimer = null;
-  function triggerSpacecraftToast() {
+  window.triggerSpacecraftToast = function() {
     playAudioEffect('chime');
     const toast = document.getElementById('system-toast-dock');
     
@@ -1044,7 +1044,7 @@
   }
 
   /* --- IN-APP ACTIVE VIEW STATES PANEL ROUTING --- */
-  function switchAppPane(mode) {
+  window.switchAppPane = function(mode) {
     playAudioEffect('blip');
     const dashPane = document.getElementById('app-pane-dash');
     const mapPane = document.getElementById('app-pane-map');
@@ -1065,31 +1065,31 @@
   }
 
   /* --- INTERACTIVE INSPECTOR MODAL --- */
-  function triggerInAppModal(nodeTitle) {
+  window.triggerInAppModal = function(nodeTitle) {
     const modal = document.getElementById('inapp-modal');
     const title = document.getElementById('modal-node-title');
     title.innerText = nodeTitle.toUpperCase();
     modal.classList.add('active-modal');
   }
-  function closeInAppModal() {
+  window.closeInAppModal = function() {
     playAudioEffect('click');
     document.getElementById('inapp-modal').classList.remove('active-modal');
   }
 
   /* --- LEGAL PANEL MANAGERS --- */
-  function openLegalPanel(view) {
+  window.openLegalPanel = function(view) {
     playAudioEffect('blip');
     document.getElementById(`panel-${view}`).classList.add('active-panel');
     document.body.style.overflow = 'hidden';
   }
-  function closeLegalPanel(view) {
+  window.closeLegalPanel = function(view) {
     playAudioEffect('click');
     document.getElementById(`panel-${view}`).classList.remove('active-panel');
     document.body.style.overflow = '';
   }
 
   /* --- HARDWARE ARCHITECTURE LOGIC VALIDATOR --- */
-  function runChipDiagnostic() {
+  window.runChipDiagnostic = function() {
     const selection = document.getElementById('chip-selector').value;
     const display = document.getElementById('validator-readout');
     if (!selection) {
@@ -1144,7 +1144,7 @@
   }
 
   /* --- FORM SUBMISSION PIPELINE RE-ROUTE --- */
-  async function handleBetaSubmit(event) {
+  window.handleBetaSubmit = async function(event) {
     event.preventDefault();
     const emailInput = document.getElementById('beta-email');
     const statusText = document.getElementById('form-status');
@@ -1305,13 +1305,12 @@
   }
   function lowerFirst(topic){ return topic.charAt(0).toLowerCase() + topic.slice(1); }
 
-  /* FIXED SYNTAX SCOPE FAULT VARIABLE RIGHT HERE */
-  function runQuickTopic(topicName) {
+  window.runQuickTopic = function(topicName) {
     document.getElementById('topicInput').value = topicName;
-    generate(topicName);
+    window.generate(topicName);
   }
 
-  async function generate(rawTopic){
+  window.generate = async function(rawTopic){
     if(generating) return;
     const topic = clean(rawTopic);
     if(!topic){
@@ -1352,7 +1351,6 @@
   }
 
   function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
-  topicInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') generate(topicInput.value); });
 </script>
 
 </body>
